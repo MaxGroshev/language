@@ -41,12 +41,26 @@ enum NODE_TYPE
 {
     TYPE_NUM = 10,
     TYPE_VAR = 120,
-    OP_EQ   = 61,
+
+    //OPERATORS
+    OP_IF   = 105,
+
+    //MATH_OPER:
     OP_ADD  = 43,
     OP_SUB  = 45,
     OP_MUL  = 42,
     OP_DIV  = 47,
     OP_POW  = 94,
+
+    //LOGIC_OPER
+    OP_LESS     = 60,
+    OP_EQ       = 61,
+    OP_COMP_EQ  = 62,
+    OP_ABOVE    = 63,
+    OP_ABOVE_EQ = 64,
+    OP_LESS_EQ  = 65,
+
+    //MATH_FUNC:
     OP_SIN  = 50,
     OP_COS  = 51,
     OP_LN   = 52,
@@ -105,15 +119,19 @@ tree_node_t* tree_delete        (tree_node_t* tree_node);
 
 tree_node_t* rec_descent (const char* file_dir);
 tree_node_t* get_end     (const char* buffer);
+tree_node_t* get_if      (const char* buffer);
+tree_node_t* get_operator(const char* buffer);
+tree_node_t* get_assign  (const char* buffer);
 tree_node_t* get_sign    (const char* buffer);
-tree_node_t* get_func    (const char* buffer);
+tree_node_t* get_declare (const char* buffer);
+tree_node_t* get_ident   (const char* buffer);
 tree_node_t* get_pm_sign (const char* buffer);
-tree_node_t* get_ident     (const char* buffer);
 tree_node_t* get_num     (const char* buffer);
-tree_node_t* get_exp     (const char* buffer);
 tree_node_t* get_md_sign (const char* buffer);
 tree_node_t* get_brac    (const char* buffer);
 tree_node_t* get_deg     (const char* buffer);
+
+tree_node_t* get_comp    (const char* buffer);
 
 //------------------------------------------------------------------------------------------------------------------------
 

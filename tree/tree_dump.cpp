@@ -27,6 +27,38 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
         graph_dump_set->nodes->label     = "TYPE_VAR";
         print_char_node (TREE_DUMP_SET, parent->value);
     }
+    else if (parent->node_type >= OP_LESS && parent->node_type <= OP_LESS_EQ)
+    {
+        graph_dump_set->nodes->fillcolor = "#3EB489";
+
+        switch (parent->node_type)
+        {
+            case OP_EQ:
+                graph_dump_set->nodes->label     = "EQUAL";
+                print_char_node (TREE_DUMP_SET, OP_EQ);
+                break;
+            case OP_COMP_EQ:
+                graph_dump_set->nodes->label     = "COMP_EQUAL";
+                print_char_node (TREE_DUMP_SET, 'c');
+                break;
+            case OP_LESS:
+                graph_dump_set->nodes->label     = "LESS";
+                print_char_node (TREE_DUMP_SET, 'c');
+                break;
+            case OP_ABOVE:
+                graph_dump_set->nodes->label     = "ABOVE";
+                print_char_node (TREE_DUMP_SET, 'c');
+                break;
+            case OP_ABOVE_EQ:
+                graph_dump_set->nodes->label     = "ABOVE_EQUAL";
+                print_char_node (TREE_DUMP_SET, 'c');
+                break;
+            case OP_LESS_EQ:
+                graph_dump_set->nodes->label     = "LESS_EQUAL";
+                print_char_node (TREE_DUMP_SET, 'c');
+                break;
+        }
+    }
     else
     {
         graph_dump_set->nodes->fillcolor = "#77DD77";
@@ -49,8 +81,8 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
             case OP_POW:
                 print_char_node (TREE_DUMP_SET, OP_POW);
                 break;
-            case OP_EQ:
-                print_char_node (TREE_DUMP_SET, OP_EQ);
+            case OP_IF:
+                print_str_node  (TREE_DUMP_SET, "if");
                 break;
             case CONST_EXP:
                 graph_dump_set->nodes->fillcolor = "#FF8C69";
