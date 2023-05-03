@@ -1,5 +1,10 @@
 #include "DSL.h"
 
+tree_node_t* make_gart_node ()
+{
+    return tree_new_op_node (OP_GART_N);
+}
+
 tree_node_t* New_num (tree_data_type value)
 {
     return tree_new_num_node (value);

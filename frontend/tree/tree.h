@@ -39,8 +39,9 @@ struct tree_t
 
 enum NODE_TYPE
 {
-    TYPE_NUM = 10,
-    TYPE_VAR = 120,
+    TYPE_NUM  = 10,
+    TYPE_VAR  = 120,
+    OP_GART_N = 59,
 
     //OPERATORS
     OP_IF   = 105,

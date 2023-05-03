@@ -66,6 +66,11 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
 
         switch (parent->node_type)
         {
+            case OP_GART_N:
+                graph_dump_set->nodes->label     = "GART_NODE";
+                graph_dump_set->nodes->fillcolor = "#EDD19C";
+                print_char_node (TREE_DUMP_SET, ';');
+                break;
             case OP_ADD:
                 print_char_node (TREE_DUMP_SET, OP_ADD);
                 break;
@@ -83,32 +88,6 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
                 break;
             case OP_IF:
                 print_str_node  (TREE_DUMP_SET, "if");
-                break;
-            case CONST_EXP:
-                graph_dump_set->nodes->fillcolor = "#FF8C69";
-                graph_dump_set->nodes->label     = "CONST_VAL";
-                print_str_node  (TREE_DUMP_SET, "e");
-                break;
-            case OP_SQR:
-                print_str_node  (TREE_DUMP_SET, "sqr");
-                break;
-            case OP_LN:
-                print_str_node  (TREE_DUMP_SET, "ln");
-                break;
-            case OP_LOG:
-                print_str_node  (TREE_DUMP_SET, "log");
-                break;
-            case OP_SIN:
-                print_str_node  (TREE_DUMP_SET, "sin");
-                break;
-            case OP_COS:
-                print_str_node  (TREE_DUMP_SET, "cos");
-                break;
-            case OP_TG:
-                print_str_node  (TREE_DUMP_SET, "tg");
-                break;
-            case OP_CTG:
-                print_str_node  (TREE_DUMP_SET, "ctg");
                 break;
         }
     }

@@ -91,7 +91,6 @@ tree_node_t* tree_link_r (tree_node_t* parent, tree_node_t* child)
     if (parent->node_type == TYPE_NUM) write_tree_logs (T_TYPE_NUM_HAS_CHILD, parent);
     else if (parent->right == NULL)
     {
-
         parent->right = child;
         write_tree_logs (T_R_EDGE_SUC_CREATED, parent);
         return parent->right;
@@ -158,7 +157,3 @@ tree_node_t* tree_delete (tree_node_t* tree_node)
 
     return NULL;
 }
-
-
-
-

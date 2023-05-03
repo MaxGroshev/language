@@ -1,9 +1,7 @@
-if -(x+4) < 5 then
-begin:
-    if -(x+4) < 5 then
+if x < 5 then
     begin:
-        y=83
+        var y=54;
+        var x=9;
     end!
-end!
 $
 
