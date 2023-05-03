@@ -1,10 +1,9 @@
 //------------------------------------------------MACROS_OF_DIR-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define TREE_GRAPH_DOT_DIR   "./tree/graph_lib/tree_dump.dot"
+#define TREE_GRAPH_DOT_DIR   "./frontend/tree/graph_lib/tree_dump.dot"
 #define TREE_REC_DESCENT_DIR "./lang.txt"
 #define TREE_LOGS_PNG_DIR    "./logs/log_pics"
 #define TREE_LOGS_HTML_DIR   "./logs/log_file.html"
-#define TREE_LOGS_TEX_DIR    "./LaTeX/differ.tex"
 
 //------------------------------------------------MACROS_OF_DUMP_AND_LOGS--------------------------------------------------------------------------------------------------------------------------------------------
 

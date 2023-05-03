@@ -10,7 +10,7 @@
 
 #include "tree_define.h"
 #include "./graph_lib/graphviz.h"
-#include "../logs/log_file.h"
+#include "../../logs/log_file.h"
 #include "my_ASSERT.h"
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +71,12 @@ enum NODE_TYPE
     OP_CTG  = 58,
 };
 
+enum string_func_cond
+{
+    STR_NOT_SKIP_SPACE = 0,
+    STR_SKIP_SPACE     = 1,
+};
+
 //---------------------------------------------------LOGS_ENUM---------------------------------------------------------------------------------------------------------------------------------------------
 
 enum TREE_CODE_OF_PRINT
@@ -115,24 +121,6 @@ tree_node_t* tree_link_r        (tree_node_t* parent, tree_node_t* child);
 tree_node_t* tree_remove        (tree_t* pine, tree_node_t* node);
 tree_node_t* tree_delete        (tree_node_t* tree_node);
 
-//---------------------------------------REC_DESCENT_FUNC-------------------------------------------------------------------------
-
-tree_node_t* rec_descent (const char* file_dir);
-tree_node_t* get_end     (const char* buffer);
-tree_node_t* get_if      (const char* buffer);
-tree_node_t* get_operator(const char* buffer);
-tree_node_t* get_assign  (const char* buffer);
-tree_node_t* get_sign    (const char* buffer);
-tree_node_t* get_declare (const char* buffer);
-tree_node_t* get_ident   (const char* buffer);
-tree_node_t* get_pm_sign (const char* buffer);
-tree_node_t* get_num     (const char* buffer);
-tree_node_t* get_md_sign (const char* buffer);
-tree_node_t* get_brac    (const char* buffer);
-tree_node_t* get_deg     (const char* buffer);
-
-tree_node_t* get_comp    (const char* buffer);
-
 //------------------------------------------------------------------------------------------------------------------------
 
 void         graph_dump         (tree_node_t* tree_node);
@@ -143,4 +131,4 @@ void         signal_handler     (int signal);
 char*        read_file          (const char* file_dir);
 void         syntax_error       (int num_of_error, const char* buffer, const char* file_name, const char* func_name, int num_of_line);
 
-int strncomp (const char* str1, const char* str2, size_t num_of_elem);
+int strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space = 0);

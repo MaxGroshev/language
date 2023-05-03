@@ -39,23 +39,23 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
                 break;
             case OP_COMP_EQ:
                 graph_dump_set->nodes->label     = "COMP_EQUAL";
-                print_char_node (TREE_DUMP_SET, 'c');
+                print_str_node (TREE_DUMP_SET, "==");
                 break;
             case OP_LESS:
                 graph_dump_set->nodes->label     = "LESS";
-                print_char_node (TREE_DUMP_SET, 'c');
+                print_str_node (TREE_DUMP_SET, "\\<");
                 break;
             case OP_ABOVE:
                 graph_dump_set->nodes->label     = "ABOVE";
-                print_char_node (TREE_DUMP_SET, 'c');
+                print_str_node (TREE_DUMP_SET, "\\>");
                 break;
             case OP_ABOVE_EQ:
                 graph_dump_set->nodes->label     = "ABOVE_EQUAL";
-                print_char_node (TREE_DUMP_SET, 'c');
+                print_str_node (TREE_DUMP_SET, "\\>=");
                 break;
             case OP_LESS_EQ:
                 graph_dump_set->nodes->label     = "LESS_EQUAL";
-                print_char_node (TREE_DUMP_SET, 'c');
+                print_str_node (TREE_DUMP_SET, "\\<=");
                 break;
         }
     }

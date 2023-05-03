@@ -2,12 +2,14 @@ TARGET   = lang
 CC       = gcc
 CFLAGS   = -c -std=c++17
 
-GR_DIR    = ./tree/graph_lib/
+GR_DIR    = ./frontend/tree/graph_lib/
 LOGS_DIR  = ./logs/
-TREE_DIR  = ./tree/
+TREE_DIR  = ./frontend/tree/
+DESC_DIR  = ./frontend/
 PREF_OBJ  = ./obj/
 PREF_STAT = ./logs/log_pics/
 
+autocrlf = false
 
 #Graphviz files
 GR_LIB   = $(wildcard $(GR_DIR)*.cpp)
@@ -21,18 +23,21 @@ OBJ      = $(patsubst %.cpp, $(PREF_OBJ)%.o, $(SRC))     #turn .cpp into .o
 #Logs files
 LOGS_SRC = $(wildcard $(LOGS_DIR)*.cpp)
 OBJ_LOGS = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(LOGS_SRC))
+#Rec_descent files
+DESC_SRC = $(wildcard $(DESC_DIR)*.cpp)
+OBJ_DESC = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(DESC_SRC))
 
 
 
 all:     $(TARGET)
 
-$(TARGET):  $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS)
-	$(CC) -o $(TARGET) $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS)
+$(TARGET):  $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(DESC_SRC)
+	$(CC) -o $(TARGET) $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(DESC_SRC)
 
 $(PREF_OBJ)%.o : %.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
-
+.PHONY : valgrind
 valgrind:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./$(TARGET)
 

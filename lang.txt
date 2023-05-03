@@ -1,1 +1,9 @@
-if var x=y then$
+if -(x+4) < 5 then
+begin:
+    if -(x+4) < 5 then
+    begin:
+        y=83
+    end!
+end!
+$
+

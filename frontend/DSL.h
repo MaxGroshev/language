@@ -1,7 +1,16 @@
 #pragma once
-#include "language.h"
+#include "../language.h"
 
 //-------------------------------------------------------------------------------------------------------------------------------
+
+// #define Add_new_var
+//         if (prog_stat->var_capacity >= prog_stat->var_num + 2)
+//         {
+//             prog_stat_resize (prog_stat);
+//         }
+//         preog->decl_vars
+
+//---------------------------------------------------------------------------------------------------------------------
 
 #define Copy_l copy_node (tree_node->left)
 #define Copy_r copy_node (tree_node->right)
