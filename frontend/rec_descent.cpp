@@ -18,7 +18,8 @@ tree_node_t* rec_descent (const char* file_dir)
 
 tree_node_t* get_end (const char* buffer, prog_data_t* prog_stat)
 {
-    tree_node_t* tree_node = get_operator (buffer, prog_stat);
+    tree_node_t* tree_node = get_begin (buffer, prog_stat);
+
 
     if (buffer[pos_in_file] != '$') syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     return tree_node;
@@ -30,10 +31,10 @@ tree_node_t* get_operator (const char* buffer, prog_data_t* prog_stat)
     {
         return get_if (buffer, prog_stat);
     }
-    else if (strncomp (buffer + pos_in_file, "end!\n", strlen ("end!\n"), STR_SKIP_SPACE))
-    {
-        return make_gart_node ();
-    }
+    // else if (strncomp (buffer + pos_in_file, "end!\n", strlen ("end!\n"), STR_SKIP_SPACE))
+    // {
+    //     return make_gart_node ();
+    // }
     return get_assign (buffer, prog_stat);
 }
 
@@ -43,16 +44,12 @@ tree_node_t* get_if (const char* buffer, prog_data_t* prog_stat)
 
     if (strncomp (buffer + pos_in_file, "then\n", strlen ("then\n"), STR_SKIP_SPACE))
     {
-        //tree_node_t* garten_node = make_gart_node ();
-        tree_node_t* expr_node   = get_begin (buffer, prog_stat);
-        //tree_link_l (garten_node, expr_node);
-        // tree_node_t* r_exp_node  = get_operator (buffer, prog_stat);
-        // tree_link_r (garten_node, r_exp_node);
+        tree_node_t* expr_node   = get_begin    (buffer, prog_stat);
 
-        get_end (buffer, prog_stat);
+        //get_end (buffer, prog_stat);
         return tree_new_op_node (OP_IF, cond_node, expr_node); // not return go to get right node (assigment or operator)
     }
-    return get_operator (buffer, prog_stat); //remove
+   // return get_operator (buffer, prog_stat); //remove
     syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
 }
 
@@ -60,7 +57,10 @@ tree_node_t* get_begin (const char* buffer, prog_data_t* prog_stat)
 {
     if (strncomp (buffer + pos_in_file, "begin:\n", strlen ("begin:\n"), STR_SKIP_SPACE))
     {
-        return get_operator (buffer, prog_stat);
+        tree_node_t* l_exp   = get_operator (buffer, prog_stat);
+        tree_node_t* r_exp   = get_operator (buffer, prog_stat);
+
+        return make_gart_node (l_exp, r_exp);
     }
     syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
 }
@@ -118,7 +118,8 @@ tree_node_t* get_assign (const char* buffer, prog_data_t* prog_stat)
 
 tree_node_t* get_area_end (const char* buffer, prog_data_t* prog_stat)
 {
-    printf ("here\n");
+
+    printf ("want to finish\n");
     if (strncomp (buffer + pos_in_file, "end!\n", strlen ("end!\n"), STR_SKIP_SPACE))
     {
         return make_gart_node ();
@@ -141,15 +142,20 @@ tree_node_t* get_ident (const char* buffer, prog_data_t* prog_stat) //add multis
         syntax_error (S_NO_MUL_OR_DIV_OP, buffer, CUR_POS_IN_PROG);
     }
 
-    if ((buffer[pos_in_file] >= 'a' && buffer[pos_in_file] <= 'z') ||
-        (buffer[pos_in_file] >= 'A' && buffer[pos_in_file] <= 'Z'))
+    if (((buffer[pos_in_file] >= 'a' && buffer[pos_in_file] <= 'z') ||
+        (buffer[pos_in_file] >= 'A' && buffer[pos_in_file] <= 'Z')) && buffer[pos_in_file] != 'e')
+
     {
         char var = buffer[pos_in_file];
+        printf ("%c -- char\n", var);
         pos_in_file++;
         return tree_new_var_node (TYPE_VAR, var);
     }
-    else return get_num  (buffer, prog_stat);
-
+    else
+    {
+       // printf ("here\n");
+        return get_num  (buffer, prog_stat);
+    }
 }
 
 tree_node_t* get_sign (const char* buffer, prog_data_t* prog_stat)
