@@ -1,9 +1,8 @@
 if x < 5 then
     begin:
-        if x < 5 then
-        begin:
-            x=5;
-        end!
+        var y=54;
+        x=9;
     end!
+end!
 $
 

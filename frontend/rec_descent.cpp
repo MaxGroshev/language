@@ -30,6 +30,10 @@ tree_node_t* get_operator (const char* buffer, prog_data_t* prog_stat)
     {
         return get_if (buffer, prog_stat);
     }
+    else if (strncomp (buffer + pos_in_file, "end!\n", strlen ("end!\n"), STR_SKIP_SPACE))
+    {
+        return make_gart_node ();
+    }
     return get_assign (buffer, prog_stat);
 }
 
@@ -45,7 +49,7 @@ tree_node_t* get_if (const char* buffer, prog_data_t* prog_stat)
         // tree_node_t* r_exp_node  = get_operator (buffer, prog_stat);
         // tree_link_r (garten_node, r_exp_node);
 
-        //  get_end (buffer, prog_stat);
+        get_end (buffer, prog_stat);
         return tree_new_op_node (OP_IF, cond_node, expr_node); // not return go to get right node (assigment or operator)
     }
     return get_operator (buffer, prog_stat); //remove
@@ -100,9 +104,12 @@ tree_node_t* get_assign (const char* buffer, prog_data_t* prog_stat)
     {
         pos_in_file++;
         tree_node_t* assign_node = get_sign (buffer, prog_stat);
-        if (strncomp (buffer + pos_in_file, ";", strlen (";"), STR_SKIP_SPACE))
+        if (strncomp (buffer + pos_in_file, ";\n", strlen (";\n"), STR_SKIP_SPACE))
         {
-            return tree_new_op_node (OP_EQ, tree_node, assign_node);
+            tree_node_t* l_exp = tree_new_op_node (OP_EQ, tree_node, assign_node);
+            tree_node_t* r_exp = get_operator (buffer, prog_stat);
+
+            return make_gart_node (l_exp, r_exp);
         }
         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     }
@@ -111,16 +118,11 @@ tree_node_t* get_assign (const char* buffer, prog_data_t* prog_stat)
 
 tree_node_t* get_area_end (const char* buffer, prog_data_t* prog_stat)
 {
+    printf ("here\n");
     if (strncomp (buffer + pos_in_file, "end!\n", strlen ("end!\n"), STR_SKIP_SPACE))
     {
-        printf ("here\n");
         return make_gart_node ();
     }
-
-//     else if (strncomp (buffer + pos_in_file, ";", strlen (";"), STR_SKIP_SPACE))
-//     {
-//
-//     }
     syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
 }
 
@@ -146,7 +148,7 @@ tree_node_t* get_ident (const char* buffer, prog_data_t* prog_stat) //add multis
         pos_in_file++;
         return tree_new_var_node (TYPE_VAR, var);
     }
-    else return get_num (buffer, prog_stat);
+    else return get_num  (buffer, prog_stat);
 
 }
 
