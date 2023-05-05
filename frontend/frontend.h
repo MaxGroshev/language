@@ -56,4 +56,6 @@ tree_node_t* get_brac    (const char* buffer, prog_data_t* prog_stat);
 tree_node_t* get_deg     (const char* buffer, prog_data_t* prog_stat);
 
 tree_node_t* get_line_end (const char* buffer, prog_data_t* prog_stat);
+tree_node_t* get_area_end (const char* buffer, prog_data_t* prog_stat);
+
 tree_node_t* get_comp     (const char* buffer, prog_data_t* prog_stat);
