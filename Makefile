@@ -1,6 +1,6 @@
 TARGET   = lang
 CC       = gcc
-CFLAGS   = -c -std=c++17
+CFLAGS   = -c -std=c++17 -Wall
 
 GR_DIR    = ./frontend/tree/graph_lib/
 LOGS_DIR  = ./logs/

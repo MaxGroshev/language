@@ -40,7 +40,7 @@ struct data_stat_t
 {
     size_t capacity;
     size_t size;
-    int*   head;
+    double*   head;
     size_t tail;
     const char* save_pic_to = NULL;
 };
@@ -63,10 +63,10 @@ struct dump_graph_t
 
 void init_graph      (dump_graph_t* graph_dump_set, const char* dot_dir);
 
-void print_int_node  (dump_graph_t* graph_dump_set, int* node_address, struct node_t nodes, int* right, int* left, int value);
-void print_char_node (dump_graph_t* graph_dump_set, int* node_address, struct node_t nodes, int* right, int* left, char value);
-void print_str_node  (dump_graph_t* graph_dump_set, int* node_address, struct node_t nodes, int* right, int* left, const char* value);
-void make_edge       (dump_graph_t* graph_dump_set, int* node_from, int* node_to, struct edge_t edges);
+void print_int_node  (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, int value);
+void print_char_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, char value);
+void print_str_node  (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, const char* value);
+void make_edge       (dump_graph_t* graph_dump_set, double* node_from, double* node_to, struct edge_t edges);
 void resize_struct   (dump_graph_t* graph_dump_set);
 void print_def_info  (dump_graph_t* graph_dump_set);
 int  run_graphviz    (dump_graph_t* graph_dump_set, const char* dot_dir, const char* pic_dir);

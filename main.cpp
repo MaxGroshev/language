@@ -9,7 +9,7 @@ int main ()
     constructor (&pine);
 
     pine.root = rec_descent (TREE_REC_DESCENT_DIR);
-    graph_dump (pine.root);
+    //graph_dump (pine.root);
 
     tree_delete (pine.root);
     log_distr   ();
