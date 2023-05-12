@@ -175,7 +175,9 @@ int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
     //prog_stat->decl_vars[prog_stat->var_num].func_name = str_num; //add
     prog_stat->var_num++;
 
+    printf ("%d-----\n", lex_stat->lex_size);
     lex_stat->lexems[lex_stat->lex_size].name      = var_name;
+    printf ("var name: %s\n", lex_stat->lexems[1].name);
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
     lex_stat->lex_size++;
 

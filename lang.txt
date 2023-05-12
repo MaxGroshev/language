@@ -1,6 +1,4 @@
 begin:
-var tmp = 5.34 + 56;
-tmp = 6.89;
+var x = (5.34 + 56) * 6;
 end!
 $
-lex_stat->lexems[cur_lexem].node_type == OP_BEGIN

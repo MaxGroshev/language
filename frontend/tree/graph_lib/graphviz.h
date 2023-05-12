@@ -63,7 +63,7 @@ struct dump_graph_t
 
 void init_graph      (dump_graph_t* graph_dump_set, const char* dot_dir);
 
-void print_int_node  (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, int value);
+void print_int_node  (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, double value);
 void print_char_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, char value);
 void print_str_node  (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, const char* value);
 void make_edge       (dump_graph_t* graph_dump_set, double* node_from, double* node_to, struct edge_t edges);

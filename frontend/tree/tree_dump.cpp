@@ -23,9 +23,10 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
     }
     else if (parent->node_type == TYPE_VAR)
     {
+        printf ("%s\n", parent->name);
         graph_dump_set->nodes->fillcolor = "#7FC7FF";
         graph_dump_set->nodes->label     = "TYPE_VAR";
-        print_char_node (TREE_DUMP_SET, parent->value);
+        print_str_node (TREE_DUMP_SET, parent->name);
     }
     else if (parent->node_type >= OP_LESS && parent->node_type <= OP_LESS_EQ)
     {

@@ -29,11 +29,11 @@ void init_graph (dump_graph_t* graph_dump_set, const char* dot_dir)
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void print_int_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, int value)
+void print_int_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, double value)
 {
     if (graph_dump_set->node_capacity <= graph_dump_set->node_size + 1) resize_struct (graph_dump_set);
 
-    fprintf (graphviz, "node%p [shape = \"%s\", fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s\\n (%p)| {%d |left = %p |right = %p}}\"]\n",
+    fprintf (graphviz, "node%p [shape = \"%s\", fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s\\n (%p)| {%lg |left = %p |right = %p}}\"]\n",
                 node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,   nodes.label , node_address, value,     left,      right      );
     graph_dump_set->node_size++;
 }
