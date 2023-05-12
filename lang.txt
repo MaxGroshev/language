@@ -1,6 +1,6 @@
-
-
+begin:
 var tmp = 5.34 + 56;
-
-var z = 6.89;
+tmp = 6.89;
+end!
 $
+lex_stat->lexems[cur_lexem].node_type == OP_BEGIN

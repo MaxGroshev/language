@@ -66,9 +66,9 @@ void write_tree_logs (int code_of_print, tree_node_t* node, const char* file_nam
 void write_extra_logs (const char* fmt,...)
 {
     va_list args;
-    va_start(args, fmt);
-    vfprintf(LOG_FILE, fmt, args);
-    va_end(args);
+    va_start (args, fmt);
+    vfprintf (LOG_FILE, fmt, args);
+    va_end   (args);
 }
 
 int pic_log (const char* label, const char* name_of_pic)

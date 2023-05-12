@@ -89,6 +89,17 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
             case OP_IF:
                 print_str_node  (TREE_DUMP_SET, "if");
                 break;
+            case OP_END:
+                graph_dump_set->nodes->label     = "GART_NODE";
+                graph_dump_set->nodes->fillcolor = "#EDD19C";
+                print_str_node  (TREE_DUMP_SET, "end!");
+                break;
+            case OP_BEGIN:
+                graph_dump_set->nodes->label     = "GART_NODE";
+                graph_dump_set->nodes->fillcolor = "#EDD19C";
+                print_str_node  (TREE_DUMP_SET, "begin:");
+                break;
+
         }
     }
 

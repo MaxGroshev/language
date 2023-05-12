@@ -45,7 +45,12 @@ enum NODE_TYPE
     OP_GART_N = 59,
 
     //OPERATORS
-    OP_IF   = 105,
+    OP_IF      = 105,
+    OP_BEGIN   = 106,
+    OP_END     = 107,
+    OP_OPEN_BR = 108,
+    OP_CLOSE_BR= 109,
+    OP_THEN    = 110,
 
     //MATH_OPER:
     OP_ADD  = 43,
@@ -107,6 +112,7 @@ enum TREE_SYNTAX_MES
     S_NO_NUMBER            = -101,
     S_NO_MUL_OR_DIV_OP     = -102,
     S_UNREC_SYNTAX_ERROR   = -103,
+    S_ERROR                = -104,
 };
 
 //-------------------------------------------TREE_FUNC-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -131,6 +137,6 @@ void         write_tree_logs    (int code_of_print, tree_node_t* node = NULL, co
 void         write_extra_logs   (const char* fmt,...);
 void         signal_handler     (int signal);
 char*        read_file          (const char* file_dir);
-void         syntax_error       (int num_of_error, const char* buffer, const char* file_name, const char* func_name, int num_of_line);
+void         syntax_error       (int num_of_error, const char* buffer = NULL, const char* file_name = NULL, const char* func_name = NULL, int num_of_line = 0);
 
 int strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space = 0);
