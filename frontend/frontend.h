@@ -38,16 +38,19 @@ struct lex_stat_t
     struct tree_node_t* lexems;
 };
 
+//---------------------------------------PROG_LOGIC----------------------------------------------
+
+int frontend_utils (const char* file_dir);
+
+int prog_stat_init       (prog_data_t* prog_stat);
+int prog_data_dtor       (char* buffer, prog_data_t* prog_stat);
+int lexical_analysis     (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat);
+int lexems_init          (lex_stat_t* lex_stat);
+tree_node_t* rec_descent (lex_stat_t* lex_stat, prog_data_t* prog_stat);
+
 //--------------------------------------------------------------------------------------------------
 
-int prog_stat_init   (prog_data_t* prog_stat);
 int prog_stat_resize (prog_data_t* prog_stat);
-
-int prog_data_dtor   (char* buffer, prog_data_t* prog_stat);
-
-
-int lexical_analysis (char* buffer, prog_data_t* prog_stat, lex_stat_t* lex_stat);
-int lexems_init      (lex_stat_t* lex_stat);
 int lexems_resize    (lex_stat_t* lex_stat);
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -63,7 +66,6 @@ int add_new_var      (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_st
 
 //---------------------------------------REC_DESCENT_FUNC-------------------------------------------------------------------------
 
-tree_node_t* rec_descent (const char* file_dir);
 tree_node_t* get_end     (lex_stat_t* lex_stat, prog_data_t* prog_stat);
 tree_node_t* get_if      (lex_stat_t* lex_stat, prog_data_t* prog_stat);
 tree_node_t* get_operator(lex_stat_t* lex_stat, prog_data_t* prog_stat);
@@ -82,3 +84,4 @@ tree_node_t* get_line_end (lex_stat_t* lex_stat, prog_data_t* prog_stat);
 tree_node_t* get_area_end (lex_stat_t* lex_stat, prog_data_t* prog_stat);
 
 tree_node_t* get_comp     (lex_stat_t* lex_stat, prog_data_t* prog_stat);
+int is_negative_val       (lex_stat_t* lex_stat);

@@ -2,28 +2,11 @@
 #define COMMENT
 
 static int cur_lexem = 0;
-tree_node_t* rec_descent (const char* file_dir)
+tree_node_t* rec_descent (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    char* buffer = read_file (file_dir);
+    tree_node_t* ret_node = get_end (lex_stat, prog_stat);
+    MY_ASSERT   (ret_node != NULL);
 
-    prog_data_t prog_stat = {};
-    prog_stat_init (&prog_stat);
-
-    lex_stat_t lex_stat = {};
-    lexems_init (&lex_stat);
-
-    lexical_analysis (buffer, &prog_stat, &lex_stat);
-
-
-    tree_node_t* ret_node = get_end (&lex_stat, &prog_stat);
-    MY_ASSERT (ret_node != NULL);
-
-
-    prog_data_dtor (buffer, &prog_stat);
-
-    //free (lex_stat.lexems); //make dtor
-    //printf ("%s", ret_node->right->node_type);
-    //return ret_node;
     return ret_node;
 }
 
@@ -59,7 +42,6 @@ tree_node_t* get_if (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 
     if (lex_stat->lexems[cur_lexem].node_type == OP_THEN)
     {
-        tree_delete (&lex_stat->lexems[cur_lexem]);
         cur_lexem++;
         tree_node_t* r_exp = get_begin (lex_stat, prog_stat);
         tree_link_r (if_node, r_exp);
@@ -74,7 +56,6 @@ tree_node_t* get_if (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 
 tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    // printf ("1)%d\n", lex_stat->lexems[cur_lexem].node_type);
     if (lex_stat->lexems[cur_lexem].node_type == OP_BEGIN) // no node
     {
         tree_node_t* begin_node = &lex_stat->lexems[cur_lexem];
@@ -87,9 +68,7 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
             fprintf (stderr, "\033[91mNo end of expression\n \033[0m:\n");
             exit (-1);
         }
-        //free (&lex_stat->lexems[cur_lexem]);
         cur_lexem++;
-        printf ("here\n");
         return begin_node;
     }
     else
@@ -118,6 +97,7 @@ tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         return comp_node;
     }
     syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG);
+    return NULL;
 }
 
 tree_node_t* get_assign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
@@ -159,13 +139,20 @@ tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat) //add mult
 tree_node_t* get_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     int is_neg_val = 0;
-    if (lex_stat->lexems[cur_lexem].node_type == OP_SUB)
+    printf ("%d\n", lex_stat->lexems[cur_lexem].node_type);
+    if (lex_stat->lexems[cur_lexem].value == -1 && lex_stat->lexems[cur_lexem + 1].node_type == OP_MUL)
     {
-        is_neg_val = 1;
-        cur_lexem++;
+        tree_node_t* l_node    = &lex_stat->lexems[cur_lexem];
+        tree_node_t* operation = &lex_stat->lexems[cur_lexem + 1];
+        cur_lexem += 2;
+        tree_node_t* r_node = get_pm_sign (lex_stat, prog_stat);
+        MY_ASSERT (r_node != NULL);
+        tree_link_r (operation, r_node);
+        tree_link_l (operation, l_node);
+
+        return operation;
     }
     tree_node_t* r_node = get_pm_sign (lex_stat, prog_stat);
-    if (is_neg_val == 1) return tree_new_op_node (OP_MUL, tree_new_num_node (-1), r_node);
     return r_node;
 }
 
@@ -221,14 +208,12 @@ tree_node_t* get_brac (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     if (lex_stat->lexems[cur_lexem].node_type == OP_OPEN_BR)
     {
-        free (&lex_stat->lexems[cur_lexem]);
         write_tree_logs (S_START_OF_BR_SEQ, NULL, CUR_POS_IN_PROG);
         cur_lexem++;
         tree_node_t* tree_node = get_sign (lex_stat, prog_stat);
         if (lex_stat->lexems[cur_lexem].node_type != OP_CLOSE_BR)
                 syntax_error (S_NO_CLOSED_BRACKETS, NULL, CUR_POS_IN_PROG);
 
-        //tree_delete (&lex_stat->lexems[cur_lexem]);
         cur_lexem++;
 
         return tree_node;

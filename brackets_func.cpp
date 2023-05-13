@@ -48,7 +48,7 @@ double tree_eval (tree_node_t* tree_node)
             {
                 printf ("%lg\n", bas);
                 double div_bas = 1 / bas;
-                printf ("%lg\n", deg);
+                printf ("%d\n", deg);
                 for (int i = 0; i > deg + 1; i--)
                 {
                     div_bas = div_bas / bas;

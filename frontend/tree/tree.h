@@ -13,6 +13,9 @@
 #include "../../logs/log_file.h"
 #include "my_ASSERT.h"
 
+#define BUF_OF_64_ELEM 64
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 struct stat;
@@ -24,7 +27,7 @@ struct tree_node_t
 {
     int            node_type;
     int            code_of_error = 0;
-    const char*    name;
+    char           name[BUF_OF_64_ELEM];
     tree_data_type value;
     tree_node_t*   right;
     tree_node_t*   left;
