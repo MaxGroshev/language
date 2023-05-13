@@ -7,7 +7,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         if (lex_stat->lex_capacity <= lex_stat->lex_size + 10) lexems_resize (lex_stat);
         if (buffer[pos_in_buf] == '$')
         {
-            lex_stat->lexems[lex_stat->lex_size].node_type = OP_GART_N;
+            lex_stat->lexems[lex_stat->lex_size].node_type = OP_PROG_END;
             lex_stat->lex_size++;
             break;
         }
@@ -35,10 +35,8 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
                 if (i == BUF_OF_64_ELEM)
                         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
                 var_name[i] = buffer[pos_in_buf];
-                lex_stat->lexems[lex_stat->lex_size].name[i] = buffer[pos_in_buf];
             }
             var_name[i] = '\0';
-            lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
 
             if (pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
             else
@@ -58,17 +56,15 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
 
         if (is_exist_var (buffer, pos_in_buf, prog_stat))
         {
-            // char var_name[BUF_OF_64_ELEM];
-            // for (int i = 0; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-            //                 (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
-            // {
-            //     if (i == BUF_OF_64_ELEM)
-            //             syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-            //     var_name[i] = buffer[pos_in_buf];
-            // }
-            // lex_stat->lexems[lex_stat->lex_size].name      = var_name;
-            // lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
-            // lex_stat->lex_size++;
+            for (int i = 0; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
+                            (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
+            {
+                if (i == BUF_OF_64_ELEM)
+                        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+                lex_stat->lexems[lex_stat->lex_size].name[i] = buffer[pos_in_buf];
+            }
+            lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+            lex_stat->lex_size++;
         }
 
         is_this_op (";",  OP_GART_N,   buffer, &pos_in_buf, lex_stat);
@@ -132,11 +128,9 @@ int is_exist_var (const char* buffer, int pos_in_buf, prog_data_t* prog_stat)
         char var_name[BUF_OF_64_ELEM];
         int i = 0;
         for (; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-                        (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
+               (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
         {
-            printf ("%d) %c\n", i, buffer[pos_in_buf]);
-            if (i == BUF_OF_64_ELEM)
-                    syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+            if (i == BUF_OF_64_ELEM) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
             var_name[i] = buffer[pos_in_buf];
         }
         var_name[i] = '\0';
@@ -150,6 +144,7 @@ int is_exist_var (const char* buffer, int pos_in_buf, prog_data_t* prog_stat)
             }
         }
         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+        return 1;
     }
     return 0;
 }
@@ -158,7 +153,7 @@ int lexems_init (lex_stat_t* lex_stat)
 {
     MY_ASSERT (lex_stat != NULL)
 
-    lex_stat->lex_capacity = 15;
+    lex_stat->lex_capacity = 150;
     lex_stat->lex_size     = 0;
 
     lex_stat->lexems = (tree_node_t*) calloc (lex_stat->lex_capacity, sizeof (tree_node_t));
@@ -186,15 +181,16 @@ int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
     if (prog_stat->var_capacity <= prog_stat->var_num + 10) prog_stat_resize (prog_stat);
     if (lex_stat->lex_capacity  <= lex_stat->lex_size + 10) lexems_resize    (lex_stat);
 
-    prog_stat->decl_vars[prog_stat->var_num].name = var_name;
-    prog_stat->decl_vars[prog_stat->var_num].line = prog_stat->str_num;
-    //prog_stat->decl_vars[prog_stat->var_num].func_name = str_num; //add
-    prog_stat->var_num++;
+    for (int i = 0; var_name[i] != '\0'; i++)
+    {
+        printf ("%d\n", var_name[i]);
+        prog_stat->decl_vars[prog_stat->var_num].name[i] = var_name[i];
+        lex_stat->lexems[lex_stat->lex_size].name[i]     = var_name[i];
+    }
 
-    printf ("%d-----\n", lex_stat->lex_size);
-   // lex_stat->lexems[lex_stat->lex_size].name      = var_name;
-    printf ("var name: %s\n", lex_stat->lexems[1].name);
+    prog_stat->decl_vars[prog_stat->var_num].line = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+    prog_stat->var_num++;
     lex_stat->lex_size++;
 
     return 0;
@@ -250,8 +246,8 @@ double my_strtod (const char* str, int* pos_in_buf)
     int i = 0;
     for (; (str[i] >= '0' && str[i] <= '9') || str[i] == '.'; i++)
     {
-        if ((str[0] == '0' && str[1] != '.') || (i == BUF_OF_64_ELEM) || (str[i] == '.' && point_flag != 0))
-                syntax_error (S_NO_CLOSED_BRACKETS, str, CUR_POS_IN_PROG); // not str to error
+        // if ((str[0] == '0' && str[1] != '.') || (i == BUF_OF_64_ELEM) || (str[i] == '.' && point_flag != 0))
+        //         syntax_error (S_NO_CLOSED_BRACKETS, str, CUR_POS_IN_PROG); // not str to error
 
         if (str[i] == '.') point_flag = 1;
         value_in_str[i] = str[i];

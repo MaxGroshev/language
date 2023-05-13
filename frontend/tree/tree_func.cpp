@@ -73,7 +73,6 @@ tree_node_t* tree_new_op_node (int node_type, tree_node_t* l_child, tree_node_t*
 tree_node_t* tree_link_l (tree_node_t* parent, tree_node_t* child)
 {
     MY_ASSERT (parent != NULL && child != NULL);
-
     if (parent->node_type == TYPE_NUM) write_tree_logs (T_TYPE_NUM_HAS_CHILD, parent);
     else if (parent->left == NULL)
     {
@@ -103,7 +102,6 @@ tree_node_t* tree_link_r (tree_node_t* parent, tree_node_t* child)
 
 tree_node_t* tree_search (tree_node_t* tree_root, tree_node_t* node)
 {
-    printf ("here\n");
     MY_ASSERT (tree_root != NULL)
     if (tree_root->left != NULL)
     {

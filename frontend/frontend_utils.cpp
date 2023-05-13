@@ -11,7 +11,13 @@ int frontend_utils (const char* file_dir)
     lexems_init (&lex_stat);
 
     lexical_analysis (buffer, &lex_stat, &prog_stat);
-    printf ("%s \n", lex_stat.lexems[1].name);
+
+    FILE* array = fopen ("./frontend/debug", "w");
+    for (int i = 0; i < lex_stat.lex_size; i++)
+    {
+        fprintf (array, "%d\n", lex_stat.lexems[i].node_type);
+    }
+    fclose (array);
 
     tree_node_t* prog_tree = rec_descent (&lex_stat, &prog_stat);
     graph_dump  (prog_tree);

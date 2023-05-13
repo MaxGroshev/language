@@ -16,10 +16,29 @@ tree_node_t* rec_descent (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 
 tree_node_t* get_end (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    tree_node_t* tree_node = get_begin (lex_stat, prog_stat);
+    tree_node_t* tree_node = get_gart_node (lex_stat, prog_stat);
 
-    //if (buffer[pos_in_file] != '$') syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG);
+    //if (buffer[pos_in_file] != '$') syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
     return tree_node;
+}
+
+tree_node_t* get_gart_node (lex_stat_t* lex_stat, prog_data_t* prog_stat)
+{
+    if (lex_stat->lexems[cur_lexem].node_type == OP_PROG_END || lex_stat->lexems[cur_lexem].node_type == OP_END) return NULL;
+
+    tree_node_t* l_node = get_operator (lex_stat, prog_stat);
+    printf ("-----%d\n", lex_stat->lexems[cur_lexem].node_type);
+    if (lex_stat->lexems[cur_lexem].node_type == OP_GART_N)
+    {
+        tree_node_t* garten_node = &lex_stat->lexems[cur_lexem];
+        cur_lexem++;
+        tree_node_t* r_node = get_gart_node (lex_stat, prog_stat);
+        tree_link_l (garten_node, l_node);
+        if (r_node != NULL) tree_link_r (garten_node, r_node);
+
+        return garten_node;
+    }
+    return l_node;
 }
 
 tree_node_t* get_operator (lex_stat_t* lex_stat, prog_data_t* prog_stat)
@@ -29,9 +48,6 @@ tree_node_t* get_operator (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         cur_lexem++;
         return get_if (lex_stat, prog_stat);
     }
-    MY_ASSERT (lex_stat->lexems[1].name != NULL);
-    printf ("2)%s %d\n", lex_stat->lexems[1].name, cur_lexem);
-    //printf ("%d\n", lex_stat->lexems[cur_lexem].node_type);
     return get_assign (lex_stat, prog_stat);
 }
 
@@ -49,7 +65,7 @@ tree_node_t* get_if (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         return if_node;
     }
    // return get_operator (buffer, prog_stat); //remove
-    syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG);
+    syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
 
     return NULL;
 }
@@ -60,13 +76,17 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         tree_node_t* begin_node = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        tree_node_t* area_node = get_operator (lex_stat, prog_stat);
+        tree_node_t* area_node = get_gart_node (lex_stat, prog_stat);
         tree_link_l (begin_node, area_node);
 
-        if (lex_stat->lexems[cur_lexem].node_type != OP_END)
+            printf ("-----%d------\n", lex_stat->lexems[cur_lexem].node_type);
+
+        if (lex_stat->lexems[cur_lexem].node_type == OP_END)
         {
-            fprintf (stderr, "\033[91mNo end of expression\n \033[0m:\n");
-            exit (-1);
+            //cur_lexem++;
+            return begin_node;
+            // fprintf (stderr, "\033[91mNo end of expression\n \033[0m:\n");
+            // exit (-1);
         }
         cur_lexem++;
         return begin_node;
@@ -75,7 +95,7 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         return get_operator (lex_stat, prog_stat);
     }
-    syntax_error (S_ERROR, NULL, CUR_POS_IN_PROG);
+    syntax_error (S_ERROR, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
 
     return NULL;
 }
@@ -83,6 +103,7 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     tree_node_t* sign_node = get_sign (lex_stat, prog_stat); //probably get_sign --> get_ident --> else (get_num))
+
     if ((lex_stat->lexems[cur_lexem].node_type == OP_COMP_EQ) ||
         (lex_stat->lexems[cur_lexem].node_type == OP_LESS)    ||
         (lex_stat->lexems[cur_lexem].node_type == OP_ABOVE)   ||
@@ -96,7 +117,7 @@ tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         tree_link_l (comp_node, sign_node);
         return comp_node;
     }
-    syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG);
+    syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
     return NULL;
 }
 
@@ -104,29 +125,27 @@ tree_node_t* get_assign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     tree_node_t* l_node = get_ident (lex_stat, prog_stat);
 
-    if (lex_stat->lexems[cur_lexem].node_type == OP_EQ) // add l_value notification
+    if (lex_stat->lexems[cur_lexem].node_type == OP_EQ)
     {
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
         tree_node_t* r_node = get_sign (lex_stat, prog_stat);
         if (lex_stat->lexems[cur_lexem].node_type == OP_GART_N)
         {
-            cur_lexem++;
             tree_link_r (operation, r_node);
             tree_link_l (operation, l_node);
 
             return operation;//make_gart_node (operation, get_begin (lex_stat, prog_stat));
         }
-        syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG);
+        syntax_error (S_UNREC_SYNTAX_ERROR, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
     }
     return l_node;
 }
 
-tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat) //add multisymbol vars
+tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     if (lex_stat->lexems[cur_lexem].node_type == TYPE_VAR)
     {
-        printf ("2)%d\n", lex_stat->lexems[cur_lexem].node_type);
         cur_lexem++;
         return &lex_stat->lexems[cur_lexem - 1];
     }
@@ -139,7 +158,6 @@ tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat) //add mult
 tree_node_t* get_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     int is_neg_val = 0;
-    printf ("%d\n", lex_stat->lexems[cur_lexem].node_type);
     if (lex_stat->lexems[cur_lexem].value == -1 && lex_stat->lexems[cur_lexem + 1].node_type == OP_MUL)
     {
         tree_node_t* l_node    = &lex_stat->lexems[cur_lexem];
@@ -208,11 +226,10 @@ tree_node_t* get_brac (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     if (lex_stat->lexems[cur_lexem].node_type == OP_OPEN_BR)
     {
-        write_tree_logs (S_START_OF_BR_SEQ, NULL, CUR_POS_IN_PROG);
         cur_lexem++;
         tree_node_t* tree_node = get_sign (lex_stat, prog_stat);
         if (lex_stat->lexems[cur_lexem].node_type != OP_CLOSE_BR)
-                syntax_error (S_NO_CLOSED_BRACKETS, NULL, CUR_POS_IN_PROG);
+                syntax_error (S_NO_CLOSED_BRACKETS, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
 
         cur_lexem++;
 
@@ -228,7 +245,7 @@ tree_node_t* get_num (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         cur_lexem++;
         return &lex_stat->lexems[cur_lexem - 1];
     }
-    syntax_error (S_NO_NUMBER, NULL, CUR_POS_IN_PROG);
+    syntax_error (S_NO_NUMBER, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
     return NULL;
 }
 //#endif
@@ -305,7 +322,7 @@ int prog_data_dtor (char* buffer, prog_data_t* prog_stat)
 
 //----------------------------------------------------------------------------------------------------------------------------
 
-void syntax_error (int num_of_error, const char* buffer, const char* file_name, const char* func_name, int num_of_line)
+void syntax_error (int num_of_error, const char* buffer, const char* file_name, const char* func_name, int num_of_line, int node_code)
 {
     fprintf (stderr, "\033[91mSyntaxERROR  \033[0m: FILE: %s, FUNCTION: %s, LINE: %d\n", file_name, func_name, num_of_line);
     switch (num_of_error)
@@ -330,10 +347,7 @@ void syntax_error (int num_of_error, const char* buffer, const char* file_name, 
             fprintf (stderr, "\033[91mName of syntax error wasn't detected. Check input: \033[0m\n");
             break;
     }
-    // for (int i = 0; i < pos_in_file + 1; i++)
-    // {
-    //     fprintf (stderr, "%c", buffer[i]);
-    // }
+    fprintf (stderr, "%d", node_code);
     fprintf (stderr, "\n");
     exit (-1);
 }

@@ -1,5 +1,13 @@
+var el =50;
+var bo = 4;
+if el > bo then
 begin:
-    var str = (5.34 - 56) * (-33);
+    el = 60;
+    bo = el +bo;
+    if bo - 3 < 7 then
+    begin:
+        bo = 7;
+    end!
 end!
 $
 -1*33

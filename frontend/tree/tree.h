@@ -54,6 +54,7 @@ enum NODE_TYPE
     OP_OPEN_BR = 108,
     OP_CLOSE_BR= 109,
     OP_THEN    = 110,
+    OP_PROG_END= 111,
 
     //MATH_OPER:
     OP_ADD  = 43,
@@ -140,6 +141,6 @@ void         write_tree_logs    (int code_of_print, tree_node_t* node = NULL, co
 void         write_extra_logs   (const char* fmt,...);
 void         signal_handler     (int signal);
 char*        read_file          (const char* file_dir);
-void         syntax_error       (int num_of_error, const char* buffer = NULL, const char* file_name = NULL, const char* func_name = NULL, int num_of_line = 0);
+void         syntax_error       (int num_of_error, const char* buffer, const char* file_name = NULL, const char* func_name = NULL, int num_of_line = 0, int node_code = 0);
 
 int strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space = 0);
