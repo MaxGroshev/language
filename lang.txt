@@ -1,13 +1,16 @@
-var el =50;
-var bo = 4;
-if el > bo then
+func_main
 begin:
-    el = 60;
-    bo = el +bo;
-    if bo - 3 < 7 then
+    var el = 50;
+    var bo = 4;
+    if  el > bo then
     begin:
-        bo = 7;
+        el = 60;
+        bo = el +bo;
+        if bo - 3 < 7 then
+        begin:
+            bo = 7;
+        end!
     end!
+    var z = -666.34;
 end!
 $
--1*33

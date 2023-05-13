@@ -29,12 +29,12 @@ void init_graph (dump_graph_t* graph_dump_set, const char* dot_dir)
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void print_int_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, double value)
+void print_val_node (dump_graph_t* graph_dump_set, double* node_address, struct node_t nodes, double* right, double* left, double value)
 {
     if (graph_dump_set->node_capacity <= graph_dump_set->node_size + 1) resize_struct (graph_dump_set);
 
-    fprintf (graphviz, "node%p [shape = \"%s\", fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s\\n (%p)| {%lg |left = %p |right = %p}}\"]\n",
-                node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,   nodes.label , node_address, value,     left,      right      );
+    fprintf (graphviz, "node%p [shape = \"%s\", width = 1.1, height = 1.21, fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%lg}\"]\n",
+                 node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,                 value);
     graph_dump_set->node_size++;
 }
 
@@ -42,8 +42,8 @@ void print_char_node (dump_graph_t* graph_dump_set, double* node_address, struct
 {
     if (graph_dump_set->node_capacity <= graph_dump_set->node_size + 1) resize_struct (graph_dump_set);
 
-    fprintf (graphviz, "node%p [shape = \"%s\", fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s\\n (%p)| {%c |left = %p |right = %p}}\"]\n",
-                node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,   nodes.label , node_address, value,     left,      right      );
+    fprintf (graphviz, "node%p [shape = \"%s\", width = 1.1, height = 1.21, fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%c}\"]\n",
+                node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,                 value);
     graph_dump_set->node_size++;
 }
 
@@ -51,8 +51,8 @@ void print_str_node (dump_graph_t* graph_dump_set, double* node_address, struct 
 {
     if (graph_dump_set->node_capacity <= graph_dump_set->node_size + 1) resize_struct (graph_dump_set);
 
-    fprintf (graphviz, "node%p [shape = \"%s\", fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s\\n (%p)| {%s |left = %p |right = %p}}\"]\n",
-                node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,   nodes.label , node_address, value,     left,      right      );
+    fprintf (graphviz, "node%p [shape = \"%s\", width = 1.1, height = 1.21, fillcolor = \"%s\", style = \"%s\", fontcolor = \"%s\", fontname = \"%s\", color = \"%s\", label = \"{%s}\"]\n",
+                node_address, nodes.shape,  nodes.fillcolor,    nodes.style,    nodes.fontcolor,    nodes.fontname,    nodes.color,                value);
     graph_dump_set->node_size++;
 }
 
@@ -75,9 +75,6 @@ void print_def_info (dump_graph_t* graph_dump_set)
     fprintf (graphviz, "rankdir = \"%s\"\n",   graph_dump_set->orientation);
     fprintf (graphviz, "splines = \"%s\"\n\n", graph_dump_set->splines);
 
-    fprintf (graphviz, "node_stat [margin = \"0.3*0.3\", style = \"filled\", shape = \"record\", fillcolor = \"#8DB6CD\" label = \" size = %ld | root point = %p\"]\n",
-    graph_dump_set->info.size, graph_dump_set->info.head);
-    fprintf (graphviz, "{rank = source; node_stat}\n\n");
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------

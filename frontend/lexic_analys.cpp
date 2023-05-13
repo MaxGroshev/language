@@ -1,5 +1,24 @@
 #include "frontend.h"
 
+//=======================================READING_OF_PROG_FILE=========================================================
+
+char* read_file (const char* file_dir)
+{
+    FILE* seq_file = fopen (file_dir, "r");
+    MY_ASSERT (seq_file != NULL);
+
+    struct stat file_data = {};
+    stat (file_dir, &file_data);
+    char* buffer = (char*) calloc (file_data.st_size, sizeof (char));
+    MY_ASSERT (buffer != NULL);
+
+    fread  (buffer, sizeof (char), file_data.st_size, seq_file);
+    fclose (seq_file);
+    return buffer;
+}
+
+//===========================================LEXICAL_ANALYSIS=============================================================
+
 int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     for (int pos_in_buf = 0; buffer[pos_in_buf] != '\0';)
@@ -45,7 +64,28 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
             }
         }
 
-        is_this_op ("=", OP_EQ, buffer, &pos_in_buf, lex_stat);
+        if (l_strncomp (buffer + pos_in_buf, "func_", strlen ("func_"), STR_SKIP_SPACE, &pos_in_buf))
+        {
+            int start_pos = pos_in_buf;
+            char func_name[BUF_OF_64_ELEM];
+
+            int i = 0;
+            for (; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
+                   (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
+            {
+                if (i == BUF_OF_64_ELEM)
+                        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+                func_name[i] = buffer[pos_in_buf];
+            }
+            func_name[i] = '\0';
+
+            if (pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+            else
+            {
+                add_new_func (func_name, prog_stat, lex_stat);
+            }
+        }
+
         if (buffer[pos_in_buf] >= '0' && buffer[pos_in_buf] <= '9')
         {
             lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
@@ -72,6 +112,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("(",  OP_OPEN_BR,  buffer, &pos_in_buf, lex_stat);
         is_this_op (")",  OP_CLOSE_BR, buffer, &pos_in_buf, lex_stat);
 
+        is_this_op ("=",  OP_EQ,       buffer, &pos_in_buf, lex_stat);
         is_this_op ("==", OP_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">=", OP_ABOVE_EQ, buffer, &pos_in_buf, lex_stat);
         is_this_op ("<=", OP_LESS_EQ,  buffer, &pos_in_buf, lex_stat);
@@ -149,32 +190,7 @@ int is_exist_var (const char* buffer, int pos_in_buf, prog_data_t* prog_stat)
     return 0;
 }
 
-int lexems_init (lex_stat_t* lex_stat)
-{
-    MY_ASSERT (lex_stat != NULL)
-
-    lex_stat->lex_capacity = 150;
-    lex_stat->lex_size     = 0;
-
-    lex_stat->lexems = (tree_node_t*) calloc (lex_stat->lex_capacity, sizeof (tree_node_t));
-    MY_ASSERT (lex_stat->lexems != NULL)
-
-    return 0;
-}
-
-int lexems_resize (lex_stat_t* lex_stat)
-{
-    printf ("RESIZE%d\n", lex_stat->lex_capacity);
-    lex_stat->lex_capacity *= 2;
-    tree_node_t* _lexems_resize  = (tree_node_t*) realloc (lex_stat->lexems, lex_stat->lex_capacity * sizeof (tree_node_t));
-
-    MY_ASSERT (_lexems_resize != NULL);
-    lex_stat->lexems = _lexems_resize;
-
-    return 0;
-}
-
-//-----------------------------------------------------------------------------------------------------------------
+//=============================================ADDING_OF_NEW_ELEMENTS=======================================================
 
 int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
 {
@@ -196,7 +212,27 @@ int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
     return 0;
 }
 
-//-------------------------------------------------------------------------------------------------------------------
+int add_new_func (char* func_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+{
+    if (prog_stat->func_capacity <= prog_stat->func_num + 10) prog_stat_resize (prog_stat);
+    if (lex_stat->lex_capacity   <= lex_stat->lex_size  + 10) lexems_resize    (lex_stat);
+
+    for (int i = 0; func_name[i] != '\0'; i++)
+    {
+        printf ("%d\n", func_name[i]);
+        prog_stat->decl_funcs[prog_stat->func_num].name[i] = func_name[i];
+        lex_stat->lexems[lex_stat->lex_size].name[i]      = func_name[i];
+    }
+
+    prog_stat->decl_funcs[prog_stat->func_num].line = prog_stat->str_num;
+    lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_FUNC;
+    prog_stat->func_num++;
+    lex_stat->lex_size++;
+
+    return 0;
+}
+
+//=================================================TOKENIZATION_FUNC==============================================================
 
 int l_strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space, int* pos_in_buf)
 {
