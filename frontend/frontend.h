@@ -35,7 +35,7 @@ struct lex_stat_t
 {
     int    lex_size;
     int    lex_capacity;
-    struct tree_node_t* lexems;
+    struct tree_node_t** lexems;
 };
 
 //--------------------------------------------------------------------------------------------------

@@ -7,7 +7,7 @@ int lexical_analysis (char* buffer, prog_data_t* prog_stat, lex_stat_t* lex_stat
         if (lex_stat->lex_capacity <= lex_stat->lex_size + 2) lexems_resize (lex_stat);
         if (buffer[pos_in_buf] == '$')
         {
-            lex_stat->lexems[lex_stat->lex_size].node_type = OP_GART_N;
+            lex_stat->lexems[lex_stat->lex_size]->node_type = OP_GART_N;
             lex_stat->lex_size++;
             break;
         }
@@ -19,9 +19,9 @@ int lexical_analysis (char* buffer, prog_data_t* prog_stat, lex_stat_t* lex_stat
             continue;
         }
 
-        is_this_op ("end!",   OP_END, buffer, &pos_in_buf, lex_stat);
+        is_this_op ("end!",   OP_END,   buffer, &pos_in_buf, lex_stat);
         is_this_op ("begin:", OP_BEGIN, buffer, &pos_in_buf, lex_stat);
-        is_this_op ("then",   OP_THEN, buffer, &pos_in_buf, lex_stat);
+        is_this_op ("then",   OP_THEN,  buffer, &pos_in_buf, lex_stat);
 
         if (l_strncomp (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
         {
@@ -43,15 +43,15 @@ int lexical_analysis (char* buffer, prog_data_t* prog_stat, lex_stat_t* lex_stat
             {
                 add_new_var (var_name, prog_stat, lex_stat);
             }
-            //printf ("%s 11\n", lex_stat->lexems[lex_stat->lex_size - 1].name);
+            //printf ("%s 11\n", lex_stat->lexems[lex_stat->lex_size - 1]->name);
         }
         is_this_op ("=", OP_EQ, buffer, &pos_in_buf, lex_stat);
         if (buffer[pos_in_buf] >= '0' && buffer[pos_in_buf] <= '9')
         {
-            lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
-            lex_stat->lexems[lex_stat->lex_size].value     = my_strtod (buffer + pos_in_buf, &pos_in_buf);
+            lex_stat->lexems[lex_stat->lex_size]->node_type = TYPE_NUM;
+            lex_stat->lexems[lex_stat->lex_size]->value     = my_strtod (buffer + pos_in_buf, &pos_in_buf);
             lex_stat->lex_size++;
-            printf ("%lg\n", lex_stat->lexems[lex_stat->lex_size - 1].value);
+           // printf ("%lg\n", lex_stat->lexems[lex_stat->lex_size - 1]->value);
         }
 
         if (is_exist_var (buffer, pos_in_buf, prog_stat))
@@ -64,8 +64,8 @@ int lexical_analysis (char* buffer, prog_data_t* prog_stat, lex_stat_t* lex_stat
                         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
                 var_name[i] = buffer[pos_in_buf];
             }
-            lex_stat->lexems[lex_stat->lex_size].name      = var_name;
-            lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+            lex_stat->lexems[lex_stat->lex_size]->name      = var_name;
+            lex_stat->lexems[lex_stat->lex_size]->node_type = TYPE_VAR;
             lex_stat->lex_size++;
         }
 
@@ -95,14 +95,14 @@ int is_this_op (const char* str, int code_of_op, const char* buffer, int* pos_in
 
     if (l_strncomp (buffer + *pos_in_buf, str, strlen (str), STR_SKIP_SPACE, pos_in_buf))
     {
-        lex_stat->lexems[lex_stat->lex_size].node_type = code_of_op;
+        lex_stat->lexems[lex_stat->lex_size]->node_type = code_of_op;
         lex_stat->lex_size++;
         // if (code_of_op == OP_IF || code_of_op == OP_EQ)
         // {
-        //     lex_stat->lexems[lex_stat->lex_size].node_type = OP_GART_N;
+        //     lex_stat->lexems[lex_stat->lex_size]->node_type = OP_GART_N;
         //     lex_stat->lex_size++;
         // }
-        printf ("%c 11\n", lex_stat->lexems[lex_stat->lex_size - 1].node_type);
+        //printf ("%c 11\n", lex_stat->lexems[lex_stat->lex_size - 1]->node_type);
         return 1;
     }
     return 0;
@@ -145,7 +145,8 @@ int lexems_init (lex_stat_t* lex_stat)
     lex_stat->lex_capacity = 10;
     lex_stat->lex_size     = 0;
 
-    lex_stat->lexems = (tree_node_t*) calloc (lex_stat->lex_capacity, sizeof (tree_node_t));
+    printf ("%d \n", lex_stat->lex_capacity);
+    lex_stat->lexems = (tree_node_t**) calloc (lex_stat->lex_capacity, sizeof (tree_node_t*));
     MY_ASSERT (lex_stat->lexems != NULL)
 
     return 0;
@@ -155,7 +156,7 @@ int lexems_resize (lex_stat_t* lex_stat)
 {
     printf ("%d\n", lex_stat->lex_capacity);
     lex_stat->lex_capacity *= 2;
-    tree_node_t* _lexems_resize  = (tree_node_t*) realloc (lex_stat->lexems, lex_stat->lex_capacity * sizeof (tree_node_t));
+    tree_node_t** _lexems_resize  = (tree_node_t**) realloc (lex_stat->lexems, lex_stat->lex_capacity * sizeof (tree_node_t*));
 
     MY_ASSERT (_lexems_resize != NULL);
     lex_stat->lexems = _lexems_resize;
@@ -175,10 +176,10 @@ int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
     //prog_stat->decl_vars[prog_stat->var_num].func_name = str_num; //add
     prog_stat->var_num++;
 
-    printf ("%d-----\n", lex_stat->lex_size);
-    lex_stat->lexems[lex_stat->lex_size].name      = var_name;
-    printf ("var name: %s\n", lex_stat->lexems[1].name);
-    lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+    //printf ("%d-----\n", lex_stat->lex_size);
+    lex_stat->lexems[lex_stat->lex_size]->name      = var_name;
+    //printf ("var name: %s\n", lex_stat->lexems[1]->name);
+    lex_stat->lexems[lex_stat->lex_size]->node_type = TYPE_VAR;
     lex_stat->lex_size++;
 
     return 0;
