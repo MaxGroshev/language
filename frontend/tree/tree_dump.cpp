@@ -93,7 +93,10 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
                 graph_dump_set->nodes->fillcolor = "#EDD19C";
                 print_str_node  (TREE_DUMP_SET, "begin:");
                 break;
-
+            case OP_RETURN:
+                graph_dump_set->nodes->fillcolor = "#DC143C";
+                print_str_node  (TREE_DUMP_SET, "return");
+                break;
         }
     }
 

@@ -39,10 +39,11 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
             continue;
         }
 
-        is_this_op ("if",     OP_IF,    buffer, &pos_in_buf, lex_stat); // make end node
-        is_this_op ("end!",   OP_END,   buffer, &pos_in_buf, lex_stat);
-        is_this_op ("begin:", OP_BEGIN, buffer, &pos_in_buf, lex_stat);
-        is_this_op ("then",   OP_THEN,  buffer, &pos_in_buf, lex_stat);
+        is_this_op ("if",     OP_IF,     buffer, &pos_in_buf, lex_stat); // make end node
+        is_this_op ("end!",   OP_END,    buffer, &pos_in_buf, lex_stat);
+        is_this_op ("begin:", OP_BEGIN,  buffer, &pos_in_buf, lex_stat);
+        is_this_op ("then",   OP_THEN,   buffer, &pos_in_buf, lex_stat);
+        is_this_op ("return", OP_RETURN, buffer, &pos_in_buf, lex_stat);
 
         if (l_strncomp (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
         {
@@ -86,7 +87,10 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
 
 int is_negative_val (lex_stat_t* lex_stat)
 {
-    if (lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_VAR && lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_NUM)
+    if (lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_VAR &&
+        lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_NUM &&
+        lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_FUNC)
+
     {
         lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
         lex_stat->lexems[lex_stat->lex_size].value     = -1;
@@ -139,6 +143,7 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
     else
     {
         memset (lex_stat->lexems[lex_stat->lex_size].name, '\0', BUF_OF_64_ELEM);
+        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
         return 1;
     }
     return 0;

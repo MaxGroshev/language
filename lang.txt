@@ -1,16 +1,23 @@
-func_meow
+func_moor ()
+begin:
+    var tmp = 12;
+end!
+
+func_meow ()
 begin:
     var el = 50;
     var bo = 4;
     if  el + 3 * 64 > bo then
     begin:
-        el = 60;
+        el = -func_moor () + 65;
         bo = el + bo;
         if bo - 3 < 7 then
         begin:
-            bo = (7 + 3.48) * 5;
+            bo = (7 + 3.48)* (5 + 23);
         end!
     end!
-    var z = -666.34;
+    var k = -666.34;
+
+    return el = k + 77;
 end!
 $

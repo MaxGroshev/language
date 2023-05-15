@@ -56,6 +56,7 @@ enum NODE_TYPE
     OP_CLOSE_BR= 109,
     OP_THEN    = 110,
     OP_PROG_END= 111,
+    OP_RETURN  = 112,
 
     //MATH_OPER:
     OP_ADD  = 43,
