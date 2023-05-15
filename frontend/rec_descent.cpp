@@ -121,7 +121,7 @@ tree_node_t* get_assign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 
     if (lex_stat->lexems[cur_lexem].node_type == OP_EQ)
     {
-        printf ("%s\n", lex_stat->lexems[cur_lexem - 1].name );
+       // printf ("%s\n", lex_stat->lexems[cur_lexem - 1].name );
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
         tree_node_t* r_node = get_sign (lex_stat, prog_stat);
@@ -223,6 +223,7 @@ tree_node_t* get_brac (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         cur_lexem++;
         tree_node_t* tree_node = get_sign (lex_stat, prog_stat);
+        printf ("BRACKET%d\n", lex_stat->lexems[cur_lexem].node_type);
         if (lex_stat->lexems[cur_lexem].node_type != OP_CLOSE_BR)
                 syntax_error (S_NO_CLOSED_BRACKETS, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);
         cur_lexem++;

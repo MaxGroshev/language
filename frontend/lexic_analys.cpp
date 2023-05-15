@@ -23,6 +23,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
 {
     for (int pos_in_buf = 0; buffer[pos_in_buf] != '\0';)
     {
+        int start_pos = pos_in_buf;
         if (lex_stat->lex_capacity <= lex_stat->lex_size + 10) lexems_resize (lex_stat);
         if (buffer[pos_in_buf] == '$')
         {
@@ -38,77 +39,30 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
             continue;
         }
 
-        is_this_op ("end!",   OP_END, buffer, &pos_in_buf, lex_stat);
+        is_this_op ("if",     OP_IF,    buffer, &pos_in_buf, lex_stat); // make end node
+        is_this_op ("end!",   OP_END,   buffer, &pos_in_buf, lex_stat);
         is_this_op ("begin:", OP_BEGIN, buffer, &pos_in_buf, lex_stat);
-        is_this_op ("then",   OP_THEN, buffer, &pos_in_buf, lex_stat);
+        is_this_op ("then",   OP_THEN,  buffer, &pos_in_buf, lex_stat);
 
         if (l_strncomp (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
         {
-            int start_pos = pos_in_buf;
-            char var_name[BUF_OF_64_ELEM];
-
-            int i = 0;
-            for (; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-                   (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
-            {
-                if (i == BUF_OF_64_ELEM)
-                        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-                var_name[i] = buffer[pos_in_buf];
-            }
-            var_name[i] = '\0';
-
-            if (pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-            else
-            {
-                add_new_var (var_name, prog_stat, lex_stat);
-            }
+            add_new_var (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
-
         if (l_strncomp (buffer + pos_in_buf, "func_", strlen ("func_"), STR_SKIP_SPACE, &pos_in_buf))
         {
-            int start_pos = pos_in_buf;
-            char func_name[BUF_OF_64_ELEM];
-
-            int i = 0;
-            for (; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-                   (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
-            {
-                if (i == BUF_OF_64_ELEM)
-                        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-                func_name[i] = buffer[pos_in_buf];
-            }
-            func_name[i] = '\0';
-
-            if (pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-            else
-            {
-                add_new_func (func_name, prog_stat, lex_stat);
-            }
+            add_new_func (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
-
         if (buffer[pos_in_buf] >= '0' && buffer[pos_in_buf] <= '9')
         {
-            lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
-            lex_stat->lexems[lex_stat->lex_size].value     = my_strtod (buffer + pos_in_buf, &pos_in_buf);
-            lex_stat->lex_size++;
-            printf ("%lg\n", lex_stat->lexems[lex_stat->lex_size - 1].value);
+            add_new_num (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
-
-        if (is_exist_var (buffer, pos_in_buf, prog_stat))
+        if ((buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
+            (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'))
         {
-            for (int i = 0; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-                            (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
-            {
-                if (i == BUF_OF_64_ELEM)
-                        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-                lex_stat->lexems[lex_stat->lex_size].name[i] = buffer[pos_in_buf];
-            }
-            lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
-            lex_stat->lex_size++;
+            add_exist_var (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
 
         is_this_op (";",  OP_GART_N,   buffer, &pos_in_buf, lex_stat);
-        is_this_op ("if", OP_IF,       buffer, &pos_in_buf, lex_stat); // make end node
         is_this_op ("(",  OP_OPEN_BR,  buffer, &pos_in_buf, lex_stat);
         is_this_op (")",  OP_CLOSE_BR, buffer, &pos_in_buf, lex_stat);
 
@@ -124,6 +78,68 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("*",  OP_MUL,      buffer, &pos_in_buf, lex_stat);
         is_this_op ("/",  OP_DIV,      buffer, &pos_in_buf, lex_stat);
         is_this_op ("^",  OP_POW,      buffer, &pos_in_buf, lex_stat);
+
+        if (start_pos == pos_in_buf) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+    }
+    return 0;
+}
+
+int is_negative_val (lex_stat_t* lex_stat)
+{
+    if (lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_VAR && lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_NUM)
+    {
+        lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
+        lex_stat->lexems[lex_stat->lex_size].value     = -1;
+        lex_stat->lex_size++;
+
+        lex_stat->lexems[lex_stat->lex_size].node_type = OP_MUL;
+        lex_stat->lex_size++;
+        return 1;
+    }
+    return 0;
+}
+
+int is_exist_var (prog_data_t* prog_stat, const char* var_name)
+{
+    if (var_name != NULL)
+    {
+        printf ("hi i am going to campare");
+        for (int i = 0; i < prog_stat->var_num; i++)
+        {
+            MY_ASSERT (prog_stat->decl_vars != NULL)
+            if (strcmp (var_name, prog_stat->decl_vars[i].name) == 0)
+            {
+                printf ("COMPARED by name: %s\n", prog_stat->decl_vars[i].name);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    return 0;
+}
+
+//=============================================ADDING_OF_MENTIONED_NAME_ELEMENTS=======================================================
+
+int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+{
+    int i = 0;
+    for (; (buffer[*pos_in_buf] >= 'a' && buffer[*pos_in_buf] <= 'z') ||
+           (buffer[*pos_in_buf] >= 'A' && buffer[*pos_in_buf] <= 'Z'); i++, (*pos_in_buf)++)
+    {
+        if (i == BUF_OF_64_ELEM)
+                syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+        lex_stat->lexems[lex_stat->lex_size].name[i] = buffer[*pos_in_buf];
+    }
+    lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
+    if (is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
+    {
+        lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+        lex_stat->lex_size++;
+    }
+    else
+    {
+        memset (lex_stat->lexems[lex_stat->lex_size].name, '\0', BUF_OF_64_ELEM);
+        return 1;
     }
     return 0;
 }
@@ -146,64 +162,41 @@ int is_this_op (const char* str, int code_of_op, const char* buffer, int* pos_in
     return 0;
 }
 
-int is_negative_val (lex_stat_t* lex_stat)
-{
-    if (lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_VAR && lex_stat->lexems[lex_stat->lex_size - 1].node_type != TYPE_NUM)
-    {
-        lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
-        lex_stat->lexems[lex_stat->lex_size].value     = -1;
-        lex_stat->lex_size++;
+//=============================================ADDING_OF_NEW_NAME_ELEMENTS=======================================================
 
-        lex_stat->lexems[lex_stat->lex_size].node_type = OP_MUL;
-        lex_stat->lex_size++;
-        return 1;
-    }
+int add_new_num (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+{
+    lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_NUM;
+    lex_stat->lexems[lex_stat->lex_size].value     = my_strtod (buffer + *pos_in_buf, pos_in_buf);
+    lex_stat->lex_size++;
+    printf ("%lg\n", lex_stat->lexems[lex_stat->lex_size - 1].value);
+
     return 0;
 }
 
-int is_exist_var (const char* buffer, int pos_in_buf, prog_data_t* prog_stat)
-{
-    if ((buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-        (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'))
-    {
-        char var_name[BUF_OF_64_ELEM];
-        int i = 0;
-        for (; (buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
-               (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'); i++, pos_in_buf++)
-        {
-            if (i == BUF_OF_64_ELEM) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-            var_name[i] = buffer[pos_in_buf];
-        }
-        var_name[i] = '\0';
-        for (int i = 0; i < prog_stat->var_num; i++)
-        {
-            MY_ASSERT (prog_stat->decl_vars != NULL)
-            if (strcmp (var_name, prog_stat->decl_vars[i].name) == 0)
-            {
-                printf ("COMPARED: %s\n", prog_stat->decl_vars[i].name);
-                return 1;
-            }
-        }
-        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-        return 1;
-    }
-    return 0;
-}
-
-//=============================================ADDING_OF_NEW_ELEMENTS=======================================================
-
-int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+int add_new_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
 {
     if (prog_stat->var_capacity <= prog_stat->var_num + 10) prog_stat_resize (prog_stat);
     if (lex_stat->lex_capacity  <= lex_stat->lex_size + 10) lexems_resize    (lex_stat);
 
-    for (int i = 0; var_name[i] != '\0'; i++)
+    int  start_pos = *pos_in_buf;
+    int  i = 0;
+    for (;(buffer[*pos_in_buf] >= 'a' && buffer[*pos_in_buf] <= 'z') ||
+          (buffer[*pos_in_buf] >= 'A' && buffer[*pos_in_buf] <= 'Z'); i++, (*pos_in_buf)++)
     {
-        printf ("%d\n", var_name[i]);
-        prog_stat->decl_vars[prog_stat->var_num].name[i] = var_name[i];
-        lex_stat->lexems[lex_stat->lex_size].name[i]     = var_name[i];
+        if (i == BUF_OF_64_ELEM)
+                syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+        prog_stat->decl_vars[prog_stat->var_num].name[i] = buffer[*pos_in_buf];
+        lex_stat->lexems[lex_stat->lex_size].name[i]     = buffer[*pos_in_buf];
     }
+    prog_stat->decl_vars[prog_stat->var_num].name[i] = '\0';
+    lex_stat->lexems[lex_stat->lex_size].name[i]     = '\0';
 
+    if (*pos_in_buf == start_pos ||
+        is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
+    {
+        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+    }
     prog_stat->decl_vars[prog_stat->var_num].line = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
     prog_stat->var_num++;
@@ -212,17 +205,25 @@ int add_new_var (char* var_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
     return 0;
 }
 
-int add_new_func (char* func_name, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+int add_new_func (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
 {
     if (prog_stat->func_capacity <= prog_stat->func_num + 10) prog_stat_resize (prog_stat);
     if (lex_stat->lex_capacity   <= lex_stat->lex_size  + 10) lexems_resize    (lex_stat);
 
-    for (int i = 0; func_name[i] != '\0'; i++)
+    int start_pos = *pos_in_buf;
+    int i = 0;
+    for (;(buffer[*pos_in_buf] >= 'a' && buffer[*pos_in_buf] <= 'z') ||
+          (buffer[*pos_in_buf] >= 'A' && buffer[*pos_in_buf] <= 'Z'); i++, (*pos_in_buf)++)
     {
-        printf ("%d\n", func_name[i]);
-        prog_stat->decl_funcs[prog_stat->func_num].name[i] = func_name[i];
-        lex_stat->lexems[lex_stat->lex_size].name[i]      = func_name[i];
+        if (i == BUF_OF_64_ELEM)
+                syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+        prog_stat->decl_funcs[prog_stat->func_num].name[i] = buffer[*pos_in_buf];
+        lex_stat->lexems[lex_stat->lex_size].name[i]       = buffer[*pos_in_buf];
     }
+    prog_stat->decl_funcs[prog_stat->func_num].name[i] = '\0';
+    lex_stat->lexems[lex_stat->lex_size].name[i]       = '\0';
+
+    if (*pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
 
     prog_stat->decl_funcs[prog_stat->func_num].line = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_FUNC;

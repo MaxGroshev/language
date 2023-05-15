@@ -6,7 +6,7 @@ int lexems_init (lex_stat_t* lex_stat)
 {
     MY_ASSERT (lex_stat != NULL)
 
-    lex_stat->lex_capacity = 150;
+    lex_stat->lex_capacity = 100;
     lex_stat->lex_size     = 0;
 
     lex_stat->lexems = (tree_node_t*) calloc (lex_stat->lex_capacity, sizeof (tree_node_t));
@@ -19,7 +19,7 @@ int prog_stat_init (prog_data_t* prog_stat)
 {
     MY_ASSERT (prog_stat != NULL)
 
-    prog_stat->var_capacity  = 10;
+    prog_stat->var_capacity  = 100;
     prog_stat->func_capacity = 10;
     prog_stat->var_num       = 0;
 
@@ -34,9 +34,18 @@ int prog_stat_init (prog_data_t* prog_stat)
 
 int lexems_resize (lex_stat_t* lex_stat)
 {
-    printf ("RESIZE%d\n", lex_stat->lex_capacity);
+    printf ("RESIZE%d %d\n", lex_stat->lex_capacity, lex_stat->lex_size);
+    int prev_capacity =  lex_stat->lex_capacity;
     lex_stat->lex_capacity *= 2;
     tree_node_t* _lexems_resize  = (tree_node_t*) realloc (lex_stat->lexems, lex_stat->lex_capacity * sizeof (tree_node_t));
+
+    for (int i = prev_capacity; i < lex_stat->lex_capacity; i++)
+    {
+        _lexems_resize[i].left  = NULL;
+        _lexems_resize[i].right = NULL;
+        _lexems_resize[i].value = 0;
+        _lexems_resize[i].node_type = 0;
+    }
 
     MY_ASSERT (_lexems_resize != NULL);
     lex_stat->lexems = _lexems_resize;
@@ -74,6 +83,8 @@ int lex_dtor (lex_stat_t* lex_stat)
 {
     free (lex_stat->lexems);
     lex_stat->lex_size = 0;
+
+    return 0;
 }
 
 int prog_data_dtor (char* buffer, prog_data_t* prog_stat)

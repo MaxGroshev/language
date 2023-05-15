@@ -31,4 +31,6 @@ int frontend_utils (const char* file_dir)
 
     lex_dtor (&lex_stat);
     prog_data_dtor (buffer, &prog_stat);
+
+    return 0;
 }
