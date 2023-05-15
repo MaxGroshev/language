@@ -125,7 +125,7 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 
 tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    tree_node_t* sign_node = get_sign (lex_stat, prog_stat);
+    tree_node_t* sign_node = get_comma (lex_stat, prog_stat);
 
     if ((lex_stat->lexems[cur_lexem].node_type == OP_COMP_EQ) ||
         (lex_stat->lexems[cur_lexem].node_type == OP_LESS)    ||
@@ -135,7 +135,7 @@ tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         tree_node_t* comp_node = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        tree_node_t* assign_node = get_sign (lex_stat, prog_stat);
+        tree_node_t* assign_node = get_comma (lex_stat, prog_stat);
         tree_link_r (comp_node, assign_node);
         tree_link_l (comp_node, sign_node);
         return comp_node;
@@ -153,7 +153,7 @@ tree_node_t* get_assign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
        // printf ("%s\n", lex_stat->lexems[cur_lexem - 1].name );
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        tree_node_t* r_node = get_sign (lex_stat, prog_stat);
+        tree_node_t* r_node = get_comma (lex_stat, prog_stat);
         if (lex_stat->lexems[cur_lexem].node_type == OP_GART_N)
         {
             tree_link_r (operation, r_node);
@@ -179,24 +179,18 @@ tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     }
 }
 
-tree_node_t* get_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
+tree_node_t* get_comma (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    int is_neg_val = 0;
-//     if (lex_stat->lexems[cur_lexem].value == -1 && lex_stat->lexems[cur_lexem + 1].node_type == OP_MUL)
-//     {
-//         tree_node_t* l_node    = &lex_stat->lexems[cur_lexem];
-//         tree_node_t* operation = &lex_stat->lexems[cur_lexem + 1];
-//         cur_lexem += 2;
-//         tree_node_t* r_node = get_brac (lex_stat, prog_stat);
-//         printf ("TYPE%d\n", lex_stat->lexems[cur_lexem].node_type);
-//         MY_ASSERT (r_node != NULL);
-//         tree_link_r (operation, r_node);
-//         tree_link_l (operation, l_node);
-//
-//         return operation;
-//     }
-    tree_node_t* r_node = get_pm_sign (lex_stat, prog_stat);
-    return r_node;
+    tree_node_t* expression = get_pm_sign (lex_stat, prog_stat);
+
+    if (lex_stat->lexems[cur_lexem].node_type == OP_COMMA)
+    {
+        cur_lexem++;
+        tree_node_t* l_node = get_comma (lex_stat, prog_stat);
+        tree_link_l (expression, l_node);
+        return expression;
+    }
+    return expression;
 }
 
 tree_node_t* get_pm_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
@@ -253,7 +247,7 @@ tree_node_t* get_brac (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     if (lex_stat->lexems[cur_lexem].node_type == OP_OPEN_BR)
     {
         cur_lexem++;
-        tree_node_t* tree_node = get_sign (lex_stat, prog_stat);
+        tree_node_t* tree_node = get_comma (lex_stat, prog_stat);
         printf ("BRACKET%d\n", lex_stat->lexems[cur_lexem].node_type);
         if (lex_stat->lexems[cur_lexem].node_type != OP_CLOSE_BR)
                 syntax_error (S_NO_CLOSED_BRACKETS, NULL, CUR_POS_IN_PROG, lex_stat->lexems[cur_lexem].node_type);

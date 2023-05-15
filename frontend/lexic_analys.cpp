@@ -79,6 +79,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("*",  OP_MUL,      buffer, &pos_in_buf, lex_stat);
         is_this_op ("/",  OP_DIV,      buffer, &pos_in_buf, lex_stat);
         is_this_op ("^",  OP_POW,      buffer, &pos_in_buf, lex_stat);
+        is_this_op (",",  OP_COMMA,    buffer, &pos_in_buf, lex_stat);
 
         if (start_pos == pos_in_buf) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     }
@@ -137,6 +138,7 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
     lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
     if (is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
     {
+       // printf ("ERROR\n");
         lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
         lex_stat->lex_size++;
     }

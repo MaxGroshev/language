@@ -47,6 +47,7 @@ enum NODE_TYPE
     TYPE_VAR  = 120,
     TYPE_FUNC = 220,
     OP_GART_N = 59,
+    OP_COMMA = 221,
 
     //OPERATORS
     OP_IF      = 105,
