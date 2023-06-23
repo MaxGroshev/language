@@ -28,7 +28,18 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
     else if (parent->node_type == TYPE_FUNC)
     {
         graph_dump_set->nodes->fillcolor = "#DC143C";
-        print_str_node (TREE_DUMP_SET, parent->name);
+
+        switch ( (int) parent->value)
+        {
+            case LIB_PRINT:
+                print_str_node (TREE_DUMP_SET, "print");
+                break;
+            case LIB_WRITELN:
+                print_str_node (TREE_DUMP_SET, "writeln");
+                break;
+            default:
+                print_str_node (TREE_DUMP_SET, parent->name);
+        }
     }
     else if (parent->node_type >= OP_LESS && parent->node_type <= OP_LESS_EQ)
     {
@@ -65,6 +76,10 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
             case OP_GART_N:
                 graph_dump_set->nodes->fillcolor = "#EDD19C";
                 print_char_node (TREE_DUMP_SET, ';');
+                break;
+            case OP_COMMA:
+                graph_dump_set->nodes->fillcolor = "#EDD19C";
+                print_char_node (TREE_DUMP_SET, ',');
                 break;
             case OP_ADD:
                 print_char_node (TREE_DUMP_SET, OP_ADD);

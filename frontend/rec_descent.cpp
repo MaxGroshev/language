@@ -42,12 +42,7 @@ tree_node_t* get_func (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         tree_node_t* func_node = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        printf ("empty_func %d\n", lex_stat->lexems[cur_lexem].node_type);
         tree_node_t* l_node = get_func (lex_stat, prog_stat);
-//         if (lex_stat->lexems[cur_lexem].node_type == OP_COMMA);
-//         {
-//
-//         }
 
         if (l_node != NULL) tree_link_l (func_node, l_node);
         if (lex_stat->lexems[cur_lexem].node_type == OP_BEGIN)
@@ -57,7 +52,6 @@ tree_node_t* get_func (lex_stat_t* lex_stat, prog_data_t* prog_stat)
             return func_node;
         }
         printf ("empty_func %d\n", lex_stat->lexems[cur_lexem].node_type);
-        // else if (lex_stat->lexems[cur_lexem].node_type == OP_GART_N)
 
             return func_node;
 
@@ -111,7 +105,7 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         tree_link_l (begin_node, area_node);
 
         printf ("-----%d------\n", lex_stat->lexems[cur_lexem].node_type);
-        printf ("-----%d------\n", lex_stat->lexems[cur_lexem+1].node_type);
+        printf ("-----%d------\n", lex_stat->lexems[cur_lexem + 1].node_type);
         if (lex_stat->lexems[cur_lexem].node_type == OP_END)
         {
             printf ("I am here to end! %d\n", cur_lexem);
@@ -175,22 +169,24 @@ tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     }
     else
     {
-        return get_num  (lex_stat, prog_stat);
+        return get_num (lex_stat, prog_stat);
     }
 }
 
 tree_node_t* get_comma (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
-    tree_node_t* expression = get_pm_sign (lex_stat, prog_stat);
+    tree_node_t* l_node = get_pm_sign (lex_stat, prog_stat);
 
     if (lex_stat->lexems[cur_lexem].node_type == OP_COMMA)
     {
+        tree_node_t* comma_node = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        tree_node_t* l_node = get_comma (lex_stat, prog_stat);
-        tree_link_l (expression, l_node);
-        return expression;
+        tree_node_t* r_node = get_comma (lex_stat, prog_stat);
+        if (l_node != NULL) tree_link_l (comma_node, l_node);
+        if (r_node != NULL) tree_link_r (comma_node, r_node);
+        return comma_node;
     }
-    return expression;
+    return l_node;
 }
 
 tree_node_t* get_pm_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
@@ -232,7 +228,7 @@ tree_node_t* get_deg (lex_stat_t* lex_stat, prog_data_t* prog_stat)
     {
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
-        tree_node_t* r_node = get_deg  (lex_stat, prog_stat);
+        tree_node_t* r_node = get_deg (lex_stat, prog_stat);
         tree_link_r (operation, r_node);
         tree_link_l (operation, l_node);
 
@@ -306,6 +302,6 @@ void syntax_error (int num_of_error, const char* buffer, const char* file_name, 
     }
     fprintf (stderr, "%d", node_code);
     fprintf (stderr, "\n");
-    exit (-1);
+    exit    (-1);
 }
 

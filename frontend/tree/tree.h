@@ -26,7 +26,7 @@ typedef double tree_data_type;
 struct tree_node_t
 {
     int            node_type;
-    int            code_of_error = 0;
+    int            decl;
     char           name[BUF_OF_64_ELEM];
     tree_data_type value;
     tree_node_t*   right;
@@ -47,7 +47,12 @@ enum NODE_TYPE
     TYPE_VAR  = 120,
     TYPE_FUNC = 220,
     OP_GART_N = 59,
-    OP_COMMA = 221,
+    OP_COMMA  = 221,
+
+    //STD_LIB
+
+    LIB_PRINT   = 300,
+    LIB_WRITELN = 301,
 
     //OPERATORS
     OP_IF      = 105,

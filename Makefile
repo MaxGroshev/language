@@ -5,7 +5,8 @@ CFLAGS   = -c -std=c++17 -Wall
 GR_DIR    = ./frontend/tree/graph_lib/
 LOGS_DIR  = ./logs/
 TREE_DIR  = ./frontend/tree/
-DESC_DIR  = ./frontend/
+FRONT_DIR = ./frontend/
+BACK_DIR  = ./backend/
 PREF_OBJ  = ./obj/
 PREF_STAT = ./logs/log_pics/
 
@@ -18,21 +19,24 @@ OBJ_LIB  = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(GR_LIB))
 TREE_SRC = $(wildcard $(TREE_DIR)*.cpp)
 OBJ_TREE = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(TREE_SRC))
 #Common files
-SRC      = $(wildcard *.cpp )                            #include of all files with .cpp
+SRC      = $(wildcard *.cpp)                            #include of all files with .cpp
 OBJ      = $(patsubst %.cpp, $(PREF_OBJ)%.o, $(SRC))     #turn .cpp into .o
 #Logs files
 LOGS_SRC = $(wildcard $(LOGS_DIR)*.cpp)
 OBJ_LOGS = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(LOGS_SRC))
 #Rec_descent files
-DESC_SRC = $(wildcard $(DESC_DIR)*.cpp)
-OBJ_DESC = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(DESC_SRC))
+FRONT_SRC= $(wildcard $(FRONT_DIR)*.cpp)
+OBJ_FRONT= $(patsubst $(PREF_OBJ)%.cpp, %.o, $(FRONT_SRC))
+#Backend files
+BACK_SRC = $(wildcard $(BACK_DIR)*.cpp)
+OBJ_BACK = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(BACK_SRC))
 
 
 
 all:     $(TARGET)
 
-$(TARGET):  $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(DESC_SRC)
-	$(CC) -o $(TARGET) $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(DESC_SRC)
+$(TARGET):  $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT) $(OBJ_BACK)
+	$(CC) -o $(TARGET) $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT) $(OBJ_BACK)
 
 $(PREF_OBJ)%.o : %.cpp
 	$(CC) $(CFLAGS) $< -o $@

@@ -25,11 +25,16 @@ int frontend_utils (const char* file_dir)
 //START_OF_REC_DESCENT------------------------------------------------------------------------------------
 
     tree_node_t* prog_tree = rec_descent (&lex_stat, &prog_stat);
+    MY_ASSERT   (prog_tree != NULL);
     graph_dump  (prog_tree);
+
+//START_OF_TREE_BUILD
+
+    print_standart (&prog_stat, prog_tree);
 
 //DTOR_OF_LEXEMS_STRUCT------------------------------------------------------------------------------------
 
-    lex_dtor (&lex_stat);
+    lex_dtor       (&lex_stat); //Will be improved by adding tree_file
     prog_data_dtor (buffer, &prog_stat);
 
     return 0;

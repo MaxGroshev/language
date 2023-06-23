@@ -45,11 +45,20 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("then",   OP_THEN,   buffer, &pos_in_buf, lex_stat);
         is_this_op ("return", OP_RETURN, buffer, &pos_in_buf, lex_stat);
 
-        if (l_strncomp (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
+
+        if (l_strncomp (buffer + pos_in_buf, "print", strlen ("print"), STR_SKIP_SPACE, &pos_in_buf))
         {
-            add_new_var (buffer, &pos_in_buf, prog_stat, lex_stat);
+            add_std_lib_func (lex_stat, LIB_PRINT);
         }
-        if (l_strncomp (buffer + pos_in_buf, "func_", strlen ("func_"), STR_SKIP_SPACE, &pos_in_buf))
+        if (l_strncomp (buffer + pos_in_buf, "writeln", strlen ("writeln"), STR_SKIP_SPACE, &pos_in_buf))
+        {
+            add_std_lib_func (lex_stat, LIB_WRITELN);
+        }
+        if (l_strncomp   (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
+        {
+            add_new_var  (buffer, &pos_in_buf, prog_stat, lex_stat);
+        }
+        if (l_strncomp   (buffer + pos_in_buf, "func_", strlen ("func_"), STR_SKIP_SPACE, &pos_in_buf))
         {
             add_new_func (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
@@ -67,12 +76,12 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("(",  OP_OPEN_BR,  buffer, &pos_in_buf, lex_stat);
         is_this_op (")",  OP_CLOSE_BR, buffer, &pos_in_buf, lex_stat);
 
-        is_this_op ("=",  OP_EQ,       buffer, &pos_in_buf, lex_stat);
         is_this_op ("==", OP_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">=", OP_ABOVE_EQ, buffer, &pos_in_buf, lex_stat);
         is_this_op ("<=", OP_LESS_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">",  OP_ABOVE,    buffer, &pos_in_buf, lex_stat);
         is_this_op ("<",  OP_LESS,     buffer, &pos_in_buf, lex_stat);
+        is_this_op ("=",  OP_EQ,       buffer, &pos_in_buf, lex_stat);
 
         is_this_op ("+",  OP_ADD,      buffer, &pos_in_buf, lex_stat);
         is_this_op ("-",  OP_SUB,      buffer, &pos_in_buf, lex_stat);
@@ -108,7 +117,6 @@ int is_exist_var (prog_data_t* prog_stat, const char* var_name)
 {
     if (var_name != NULL)
     {
-        printf ("hi i am going to campare");
         for (int i = 0; i < prog_stat->var_num; i++)
         {
             MY_ASSERT (prog_stat->decl_vars != NULL)
@@ -120,7 +128,7 @@ int is_exist_var (prog_data_t* prog_stat, const char* var_name)
         }
         return 0;
     }
-    return 0;
+    return 1;
 }
 
 //=============================================ADDING_OF_MENTIONED_NAME_ELEMENTS=======================================================
@@ -138,8 +146,8 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
     lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
     if (is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
     {
-       // printf ("ERROR\n");
         lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+        lex_stat->lexems[lex_stat->lex_size].decl      = L_MENTION;
         lex_stat->lex_size++;
     }
     else
@@ -166,6 +174,15 @@ int is_this_op (const char* str, int code_of_op, const char* buffer, int* pos_in
 
         return 1;
     }
+    return 0;
+}
+
+int add_std_lib_func (lex_stat_t* lex_stat, int code_of_func)
+{
+    lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_FUNC;
+    lex_stat->lexems[lex_stat->lex_size].value     = code_of_func;
+    lex_stat->lex_size++;
+
     return 0;
 }
 
@@ -204,8 +221,9 @@ int add_new_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat
     {
         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     }
-    prog_stat->decl_vars[prog_stat->var_num].line = prog_stat->str_num;
+    prog_stat->decl_vars[prog_stat->var_num].line  = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+    lex_stat->lexems[lex_stat->lex_size].decl      = L_DECL;
     prog_stat->var_num++;
     lex_stat->lex_size++;
 
@@ -301,7 +319,6 @@ double my_strtod (const char* str, int* pos_in_buf)
 
     double value = 0;
     sscanf (value_in_str, "%lg", &value);
-    printf ("---%lg---\n", value);
-
+    printf ("I get this num: %lg\n", value);
     return value;
 }
