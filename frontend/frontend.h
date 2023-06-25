@@ -56,7 +56,7 @@ int          frontend_utils   (const char* file_dir);
 
 ///------------------------------------PRINT_OF_STANDART------------------------------------------------
 
-tree_node_t* build_logic_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t* tree_node);
+tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t* tree_node);
 
 //-------------------------------------LEXEMS_STRUCT_FUNC-------------------------------------------------------
 

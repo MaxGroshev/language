@@ -1,6 +1,5 @@
-//#pragma once
 #include "backend.h"
-#include "../frontend/frontend.h" // make lib with mutual functions: strtod; l_strncomp
+ // make lib with mutual functions: strtod; l_strncomp
 
 char* read_of_file (const char* file_dir)
 {
@@ -23,9 +22,34 @@ tree_node_t* build_of_tree (char* tree_buffer)
 {
     static int pos_in_buf = 0;
 
-    if (l_strncomp (tree_buffer + pos_in_buf, ";", strlen (";"), STR_SKIP_SPACE, &pos_in_buf))
+    if (IS_THIS_OPER ("if"))     return tree_new_op_node (OP_IF);
+    if (IS_THIS_OPER ("return")) return tree_new_op_node (OP_RETURN);
+
+    if (IS_THIS_OPER (";"))   return tree_new_op_node (OP_GART_N);
+    if (IS_THIS_OPER ("nil")) return NULL;
+    if (IS_THIS_OPER ("=="))  return tree_new_op_node (OP_COMP_EQ);
+    if (IS_THIS_OPER (">="))  return tree_new_op_node (OP_ABOVE_EQ);
+    if (IS_THIS_OPER ("<="))  return tree_new_op_node (OP_LESS_EQ);
+    if (IS_THIS_OPER (">"))   return tree_new_op_node (OP_ABOVE);
+    if (IS_THIS_OPER ("<"))   return tree_new_op_node (OP_LESS);
+    if (IS_THIS_OPER ("="))   return tree_new_op_node (OP_EQ);
+    if (IS_THIS_OPER ("+"))   return tree_new_op_node (OP_ADD);
+    if (IS_THIS_OPER ("-"))
     {
-        return tree_new_op_node (OP_GART_N);
+        if (tree_buffer[pos_in_buf] >= '0' && tree_buffer[pos_in_buf] <= '9')
+        {
+            return tree_new_num_node (-(my_strtod (tree_buffer + pos_in_buf, &pos_in_buf)));
+        }
+        return tree_new_op_node (OP_SUB);
+    }
+    if (IS_THIS_OPER ("*"))   return tree_new_op_node (OP_MUL);
+    if (IS_THIS_OPER ("/"))   return tree_new_op_node (OP_DIV);
+    if (IS_THIS_OPER ("^"))   return tree_new_op_node (OP_POW);
+    if (IS_THIS_OPER (","))   return tree_new_op_node (OP_COMMA);
+
+    if (tree_buffer[pos_in_buf] >= '0' && tree_buffer[pos_in_buf] <= '9')
+    {
+        return tree_new_num_node (my_strtod (tree_buffer + pos_in_buf, &pos_in_buf));
     }
     if (l_strncomp   (tree_buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
     {
@@ -33,41 +57,33 @@ tree_node_t* build_of_tree (char* tree_buffer)
         var_node->name[0]  = 'v'; // for instance var1 change later
         return var_node;
     }
-    if (l_strncomp   (tree_buffer + pos_in_buf, "nil", strlen ("nil"), STR_SKIP_SPACE, &pos_in_buf))
-    {
-        return NULL;
-    }
-    if (l_strncomp   (tree_buffer + pos_in_buf, "=", strlen ("="), STR_SKIP_SPACE, &pos_in_buf))
-    {
-        return tree_new_op_node (OP_EQ);
-    }
-    if (l_strncomp   (tree_buffer + pos_in_buf, "#meow", strlen ("#meow"), STR_SKIP_SPACE, &pos_in_buf))
+    if (IS_THIS_OPER ("#"))
     {
         tree_node_t* func_node = tree_new_op_node (TYPE_FUNC);
-        func_node->name[0]  = 'm';
+
+        if      (IS_THIS_OPER ("meow"))    func_node->name[0]  = 'm';
+        else if (IS_THIS_OPER ("print"))   func_node->value    =  LIB_PRINT;
+        else if (IS_THIS_OPER ("writeln")) func_node->value    =  LIB_WRITELN;
+
         return func_node;
     }
-    if (tree_buffer[pos_in_buf] >= '0' && tree_buffer[pos_in_buf] <= '9')
-    {
-        printf ("want num");
-        return tree_new_num_node (my_strtod (tree_buffer + pos_in_buf, &pos_in_buf));
-    }
-
-    if (l_strncomp (tree_buffer + pos_in_buf, "{", strlen ("{"), STR_SKIP_SPACE, &pos_in_buf))
+    if (IS_THIS_OPER ("{"))
     {
         tree_node_t* root   = build_of_tree (tree_buffer);
         tree_node_t* l_node = build_of_tree (tree_buffer);
         tree_node_t* r_node = build_of_tree (tree_buffer);
         if (l_node != NULL) tree_link_l (root, l_node); // make if (l_node != NULL)
         if (r_node != NULL) tree_link_r (root, r_node);
-        printf ("Why\n");
 
-        if (l_strncomp (tree_buffer + pos_in_buf, "}", strlen ("}"), STR_SKIP_SPACE, &pos_in_buf))
+        if (IS_THIS_OPER ("}"))
         {
             return root;
         }
     }
+
     return NULL;
 }
 
 //=========================================================================================================================================================
+
+
