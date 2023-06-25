@@ -25,7 +25,7 @@ typedef double tree_data_type;
 struct tree_node_t
 {
     int            node_type;
-    int            decl;
+    int            num_of_var;
     char           name[BUF_OF_64_ELEM];
     tree_data_type value;
     tree_node_t*   right;

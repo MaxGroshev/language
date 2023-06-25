@@ -54,14 +54,20 @@ tree_node_t* build_of_tree (char* tree_buffer)
     if (l_strncomp   (tree_buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
     {
         tree_node_t* var_node = tree_new_op_node (TYPE_VAR);
-        var_node->name[0]  = 'v'; // for instance var1 change later
+
+        int num_of_var = my_strtod (tree_buffer + pos_in_buf, &pos_in_buf);
+        char buf[BUF_OF_64_ELEM];
+        sprintf (buf, "var%d", num_of_var);
+        strncpy (var_node->name, buf, BUF_OF_64_ELEM);
+        var_node->num_of_var = num_of_var;
+
         return var_node;
     }
     if (IS_THIS_OPER ("#"))
     {
         tree_node_t* func_node = tree_new_op_node (TYPE_FUNC);
 
-        if      (IS_THIS_OPER ("meow"))    func_node->name[0]  = 'm';
+        if      (IS_THIS_OPER ("meow"))    strncpy (func_node->name, "meow", strlen ("meow"));
         else if (IS_THIS_OPER ("print"))   func_node->value    =  LIB_PRINT;
         else if (IS_THIS_OPER ("writeln")) func_node->value    =  LIB_WRITELN;
 
@@ -72,7 +78,7 @@ tree_node_t* build_of_tree (char* tree_buffer)
         tree_node_t* root   = build_of_tree (tree_buffer);
         tree_node_t* l_node = build_of_tree (tree_buffer);
         tree_node_t* r_node = build_of_tree (tree_buffer);
-        if (l_node != NULL) tree_link_l (root, l_node); // make if (l_node != NULL)
+        if (l_node != NULL) tree_link_l (root, l_node);
         if (r_node != NULL) tree_link_r (root, r_node);
 
         if (IS_THIS_OPER ("}"))

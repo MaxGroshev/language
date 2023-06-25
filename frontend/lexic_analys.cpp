@@ -117,16 +117,16 @@ int is_exist_var (prog_data_t* prog_stat, const char* var_name)
 {
     if (var_name != NULL)
     {
-        for (int i = 0; i < prog_stat->var_num; i++)
+        for (int num_of_var = 0; num_of_var < prog_stat->var_num; num_of_var++)
         {
             MY_ASSERT (prog_stat->decl_vars != NULL)
-            if (strcmp (var_name, prog_stat->decl_vars[i].name) == 0)
+            if (strcmp (var_name, prog_stat->decl_vars[num_of_var].name) == 0)
             {
-                printf ("COMPARED by name: %s\n", prog_stat->decl_vars[i].name);
-                return 1;
+                printf ("COMPARED by name: %s\n", prog_stat->decl_vars[num_of_var].name);
+                return num_of_var;
             }
         }
-        return 0;
+        return VAR_NOT_EXIST;
     }
     return 1;
 }
@@ -144,10 +144,12 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
         lex_stat->lexems[lex_stat->lex_size].name[i] = buffer[*pos_in_buf];
     }
     lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
-    if (is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
+
+    int num_of_var = is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name);
+    if (num_of_var != VAR_NOT_EXIST)
     {
-        lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
-        lex_stat->lexems[lex_stat->lex_size].decl      = L_MENTION;
+        lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_VAR;
+        lex_stat->lexems[lex_stat->lex_size].num_of_var = num_of_var;
         lex_stat->lex_size++;
     }
     else
@@ -217,13 +219,13 @@ int add_new_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat
     lex_stat->lexems[lex_stat->lex_size].name[i]     = '\0';
 
     if (*pos_in_buf == start_pos ||
-        is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name))
+        is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name) != VAR_NOT_EXIST)
     {
         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     }
     prog_stat->decl_vars[prog_stat->var_num].line  = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
-    lex_stat->lexems[lex_stat->lex_size].decl      = L_DECL;
+    lex_stat->lexems[lex_stat->lex_size].num_of_var= prog_stat->var_num;
     prog_stat->var_num++;
     lex_stat->lex_size++;
 

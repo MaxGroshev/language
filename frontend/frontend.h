@@ -33,8 +33,9 @@ struct prog_func_t
 
 enum DECL_MENTION_OF_VAR_OR_FUNC
 {
-    L_MENTION   = 0,
-    L_DECL      = 1,
+    VAR_NOT_EXIST = -1,
+    L_MENTION     = 0,
+    L_DECL        = 1,
 };
 
 //--------------------------------------------------------------------------------------------------

@@ -1,18 +1,7 @@
 func_meow ()
 begin:
     var el = 50;
-    var bo = 4;
-    if  el + 3 * 64 > bo then
-    begin:
-        bo = el + bo;
-        if bo - 3 < 7 then
-        begin:
-            bo = (7 + 3.48)* (5 + 23);
-        end!
-    end!
-    var k = -666.34;
-    print (k);
-
-    return el = k + 77;
+    var bo = 88;
+    var x  = el + bo;
 end!
 $

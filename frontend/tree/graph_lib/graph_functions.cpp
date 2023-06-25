@@ -74,7 +74,6 @@ void print_def_info (dump_graph_t* graph_dump_set)
     fprintf (graphviz, "digraph   \n{\n");
     fprintf (graphviz, "rankdir = \"%s\"\n",   graph_dump_set->orientation);
     fprintf (graphviz, "splines = \"%s\"\n\n", graph_dump_set->splines);
-
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,7 +82,6 @@ void resize_struct (dump_graph_t* graph_dump_set)
 {
     if (graph_dump_set->edge_capacity <= graph_dump_set->edge_size + 1)
     {
-
         size_t prev_capacity = graph_dump_set->edge_capacity ;
         graph_dump_set->edge_capacity *= 2;
         edge_t* edges_resize = (edge_t*) realloc (graph_dump_set->edges,  graph_dump_set->edge_capacity * sizeof (struct edge_t));
