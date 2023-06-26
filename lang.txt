@@ -3,5 +3,6 @@ begin:
     var el = 50;
     var bo = 88;
     var x  = el + bo;
+    print (x);
 end!
 $

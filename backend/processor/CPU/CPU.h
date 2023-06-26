@@ -30,6 +30,9 @@ enum code_of_com
     PUSHM  = 12,  //push from RAM
     PUSHRM = 13,  //push from RAM from cell with num of reg
     POP    = 14,
+    POPR   = 15,
+    POPM   = 16,  //pop from RAM
+    POPRM  = 17,  //pop from RAM from cell
     JMP    = 20,  // jmp without condition
     JB     = 21,  // <
     JBE    = 22,  // <=

@@ -21,15 +21,14 @@ void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem
 
             case PUSHR:
                 i++;
-                code_of_reg = code_of_com[i];
-                stack_push (box, cpu->registers[code_of_reg]);
+                stack_push (box, cpu->registers[code_of_com[i]]);
                 break;
 
             case PUSHM:
                 i++;
                 elem = code_of_com[i];
                 MY_ASSERT  (elem <= cpu->T_RAM.capacity);
-                stack_push (box, cpu->T_RAM.data[i]);
+                stack_push (box, cpu->T_RAM.data[(int) elem]);
                 break;
 
             case PUSHRM:
@@ -40,7 +39,25 @@ void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem
 
             case POP:
                 i++;
+                stack_pop (box);
+                break;
+
+            case POPR:
+                i++;
+                code_of_reg = code_of_com[i];
                 cpu->registers[code_of_com[i]] = stack_pop (box);
+                break;
+
+            case POPM:
+                i++;
+                elem = stack_pop (box);
+                cpu->T_RAM.data[code_of_com[i]] = elem;
+                break;
+
+            case POPRM:
+                i++;
+                MY_ASSERT ((int)cpu->registers[code_of_com[i]] <= cpu->T_RAM.capacity);
+                cpu->T_RAM.data[(int)cpu->registers[code_of_com[i]]] = stack_pop (box);
                 break;
 
             case ADD:
@@ -160,10 +177,10 @@ void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem
 
 int* read_bin_file (processor* cpu)
 {
-    FILE* num_com_bin = fopen ("../test-code.bin", "rb");
+    FILE* num_com_bin = fopen ("../../prog_files/asm_code.bin", "rb");
     MY_ASSERT (num_com_bin != NULL);
 
-    stat ("../test-code.bin", &cpu->stat_of_bin);
+    stat ("../../prog_files/asm_code.bin", &cpu->stat_of_bin);
     size_t size_of_bin = cpu->stat_of_bin.st_size;
     int*   code_of_com = (int*) calloc (size_of_bin, sizeof (int));
     MY_ASSERT (code_of_com != NULL);
@@ -178,7 +195,7 @@ int* read_bin_file (processor* cpu)
 
 void stack_add (stack_t* box, double elem)
 {
-    elem = stack_pop  (box);
+    elem =  stack_pop  (box);
     elem += stack_pop (box);
     stack_push (box, elem);
     STACK_CHECK

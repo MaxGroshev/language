@@ -1,7 +1,7 @@
 #pragma once
 #define DEBUG
 //#define COMMENT
-#define NAME_OF_PROG "../fact.asm"
+#define NAME_OF_PROG "../../prog_files/prog_code.asm"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +40,9 @@ enum code_of_com
     PUSHM  = 12,  //push from RAM
     PUSHRM = 13,  //push from RAM from cell with num of reg
     POP    = 14,
+    POPR   = 15,
+    POPM   = 16,  //pop from RAM
+    POPRM  = 17,  //pop from RAM from cell
     JMP    = 20,  // jmp without condition
     JB     = 21,  // <
     JBE    = 22,  // <=
@@ -67,5 +70,6 @@ char*  read_com_asm         (FILE* word_com);
 struct token* read_word_com (size_t* count_of_com, size_t* count_of_token, int* labels, char* asm_prog);
 void   translate_com        (struct token* commands, const size_t count_of_com, const size_t count_of_token, int* labels, char* asm_prog);
 void   push_def             (struct token* commands, char* cur_tok, size_t* count_of_token, size_t* count_of_com, int cur_elem);
+void   pop_def              (struct token* commands, char* cur_tok, size_t* count_of_token, size_t* count_of_com, int cur_elem);
 int    register_def         (char* cur_tok);
 void   jmp_def              (FILE* num_com, struct token* commands, int* labels, int* cmd_array, int* cmd_size, int cur_elem);
