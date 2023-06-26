@@ -18,7 +18,7 @@
                     exit (1);                                                                            \
                 }                                                                                        \
                                                                                                          \
-                while (getchar() != '\n');                                                               \
+                while (getchar() == '\n');                                                               \
             }                                                                                            \
         }                                                                                                \
 

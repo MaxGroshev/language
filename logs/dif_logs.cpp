@@ -1,4 +1,3 @@
-#include "../language.h"
 #include "log_file.h"
 
 static FILE* LOG_FILE = NULL;

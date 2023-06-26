@@ -1,7 +1,7 @@
 #pragma once
 #define DEBUG
 //#define COMMENT
-#define NAME_OF_PROG "../../prog_files/prog_code.asm"
+#define NAME_OF_PROG "../prog_files/prog_code.asm"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

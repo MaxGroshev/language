@@ -176,9 +176,9 @@ int register_def (char* cur_tok)
 //#ifdef COMMENT
 void translate_com (struct token* commands, const size_t count_of_com, const size_t count_of_token, int* labels, char* asm_prog)
 {
-    FILE*      num_com     = fopen ("../../prog_files/asm_code.txt", "w");
+    FILE*      num_com     = fopen ("../prog_files/asm_code.txt", "w");
     MY_ASSERT (num_com != NULL);
-    FILE*      num_com_bin = fopen ("../../prog_files/asm_code.bin", "wb");
+    FILE*      num_com_bin = fopen ("../prog_files/asm_code.bin", "wb");
     MY_ASSERT (num_com_bin != NULL);
 
     int cmd_array[count_of_token];

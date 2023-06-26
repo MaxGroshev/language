@@ -1,4 +1,4 @@
-TARGET = asm
+TARGET = ../asm
 CC=gcc
 CFLAGS = -c -std=c++11
 
@@ -8,7 +8,6 @@ SRC    = $(wildcard *.cpp)                         #include of all files with .c
 OBJ    = $(patsubst %.cpp, $(PREF_OBJ)%.o, $(SRC)) #turn .cpp into .o
 
 all:     $(TARGET)
-
 
 
 $(TARGET):  $(OBJ)

@@ -1,6 +1,7 @@
 #pragma once
-#include "./tree/tree.h"
-#include "DSL.h"
+#include "../tree/tree.h"
+#include "../logs/log_file.h"
+#include "../my_str_func/str_func.h"
 
 #define BUF_OF_64_ELEM 64
 
@@ -53,9 +54,8 @@ struct lex_stat_t
 int          print_standart   (prog_data_t* prog_stat, tree_node_t* tree_node);
 tree_node_t* rec_descent      (lex_stat_t* lex_stat, prog_data_t* prog_stat);
 int          lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat);
-int          frontend_utils   (const char* file_dir);
 
-///------------------------------------PRINT_OF_STANDART------------------------------------------------
+//------------------------------------PRINT_OF_STANDART------------------------------------------------
 
 tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t* tree_node);
 

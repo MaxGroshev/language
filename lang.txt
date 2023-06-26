@@ -1,8 +1,9 @@
 func_meow ()
 begin:
     var el = 50;
-    var bo = 88;
+    var bo = 88 + 4;
+    var k = 64;
     var x  = el + bo;
-    print (x);
+    print (k);
 end!
 $

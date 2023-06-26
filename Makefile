@@ -1,26 +1,28 @@
-TARGET   = lang
-CC       = gcc
+TARGET   = frontend
+CC       = g++
 CFLAGS   = -c -std=c++17 -Wall
 
-GR_DIR    = ./frontend/tree/graph_lib/
+MODULES = ./backend/processor
+
+GR_DIR    = ./tree/graph_lib/
 LOGS_DIR  = ./logs/
-TREE_DIR  = ./frontend/tree/
+TREE_DIR  = ./tree/
 FRONT_DIR = ./frontend/
 BACK_DIR  = ./backend/
 PREF_OBJ  = ./obj/
 PREF_STAT = ./logs/log_pics/
 
-autocrlf = false
+STR_LIB_DIR = ./my_str_func/
 
+#Str func
+STR_LIB_SRC = $(wildcard $(STR_LIB_DIR)*.cpp)
+OBJ_STR_LIB = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(STR_LIB_SRC))
 #Graphviz files
 GR_LIB   = $(wildcard $(GR_DIR)*.cpp)
 OBJ_LIB  = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(GR_LIB))
 #Tree files
 TREE_SRC = $(wildcard $(TREE_DIR)*.cpp)
 OBJ_TREE = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(TREE_SRC))
-#Common files
-SRC      = $(wildcard *.cpp)                            #include of all files with .cpp
-OBJ      = $(patsubst %.cpp, $(PREF_OBJ)%.o, $(SRC))     #turn .cpp into .o
 #Logs files
 LOGS_SRC = $(wildcard $(LOGS_DIR)*.cpp)
 OBJ_LOGS = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(LOGS_SRC))
@@ -32,19 +34,23 @@ BACK_SRC = $(wildcard $(BACK_DIR)*.cpp)
 OBJ_BACK = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(BACK_SRC))
 
 
+front: $(TARGET)
 
-all:     $(TARGET)
-
-$(TARGET):  $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT) $(OBJ_BACK)
-	$(CC) -o $(TARGET) $(OBJ) $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT) $(OBJ_BACK)
+$(TARGET):  $(OBJ)  $(OBJ_TREE) $(OBJ_STR_LIB)  $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)
+	$(CC) -o $(TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_STR_LIB) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)
 
 $(PREF_OBJ)%.o : %.cpp
 	$(CC) $(CFLAGS) $< -o $@
+
+
+full_ver:
+	for dir in $(MODULES); do $(MAKE) -C $$dir; done
 
 .PHONY : valgrind
 valgrind:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./$(TARGET)
 
+.PHONY : graphviz
 graphviz:
 	dot $(GR_DIR)tree_dump.dot -T pdf -o $(PREF_STAT)tree_dump.pdf
 	dot $(GR_DIR)tree_dump.dot -T png -o $(PREF_STAT)tree_dump.png

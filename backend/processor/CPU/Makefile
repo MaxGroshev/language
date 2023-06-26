@@ -1,4 +1,4 @@
-TARGET   = cpu_t
+TARGET   = ../cpu_t
 CC=g++
 CFLAGS   = -c -std=c++11
 

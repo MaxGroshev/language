@@ -1,4 +1,3 @@
-//#include "frontend.h"
 #include "rec_descent.h"
 
 static int cur_lexem = 0;

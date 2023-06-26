@@ -10,7 +10,7 @@
 
 #include "tree_define.h"
 #include "./graph_lib/graphviz.h"
-#include "../../logs/log_file.h"
+#include "../logs/log_file.h"
 #include "my_ASSERT.h"
 
 #define BUF_OF_64_ELEM 64
@@ -89,12 +89,6 @@ enum NODE_TYPE
     OP_CTG  = 58,
 };
 
-enum string_func_cond
-{
-    STR_NOT_SKIP_SPACE = 0,
-    STR_SKIP_SPACE     = 1,
-};
-
 //---------------------------------------------------LOGS_ENUM---------------------------------------------------------------------------------------------------------------------------------------------
 
 enum TREE_CODE_OF_PRINT
@@ -149,5 +143,3 @@ void         write_extra_logs   (const char* fmt,...);
 void         signal_handler     (int signal);
 char*        read_file          (const char* file_dir);
 void         syntax_error       (int num_of_error, const char* buffer, const char* file_name = NULL, const char* func_name = NULL, int num_of_line = 0, int node_code = 0);
-
-int strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space = 0);

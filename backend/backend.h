@@ -1,7 +1,7 @@
-#pragma sonce
+#pragma once
 #define DEBUG
-//#include "../frontend/tree/tree.h"
-#include "../frontend/frontend.h"
+#include "../tree/tree.h"
+#include "../my_str_func/str_func.h"
 #include "my_ASSERT.h"
 
 //---------------------------------------------------------------------------------------------------
