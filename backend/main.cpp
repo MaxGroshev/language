@@ -1,8 +1,9 @@
 #include "backend.h"
 
-int backend_utils (const char* tree_dir)
+int main ()
 {
-    char* tree_buffer = read_of_file (tree_dir); // change to read_file when different main
+    log_init ("./logs/back_log.html");
+    char* tree_buffer = read_of_file ("./tree_stand/std_format.ast");
 
     tree_node_t* prog_tree =  build_of_tree (tree_buffer);
     graph_dump  (prog_tree);
@@ -18,5 +19,6 @@ int backend_utils (const char* tree_dir)
     fclose      (prog_file);
     free        (tree_buffer);
     tree_delete (prog_tree);
+    log_distr   ();
     return 0;
 }

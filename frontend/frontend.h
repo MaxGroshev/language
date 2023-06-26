@@ -70,8 +70,6 @@ int lex_dtor             (lex_stat_t* lex_stat);
 
 //-------------------------------------TOKENIZATION_FUNC------------------------------------------------------------------
 
-int    l_strncomp       (const char* str1, const char* str2, size_t num_of_elem, int skip_space, int* pos_in_buf);
-double my_strtod        (const char* str, int* pos_in_buf);
 int    is_this_op       (const char* str, int code_of_op, const char* buffer, int* pos_in_buf, lex_stat_t* lex_stat);
 int    is_exist_var     (prog_data_t* prog_stat, const char* var_name = NULL);
 int    add_std_lib_func (lex_stat_t* lex_stat, int code_of_prog);

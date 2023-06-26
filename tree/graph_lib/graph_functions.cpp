@@ -1,4 +1,5 @@
 #include "graphviz.h"
+#include "../../logs/log_file.h"
 
 void init_graph (dump_graph_t* graph_dump_set, const char* dot_dir)
 {

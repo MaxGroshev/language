@@ -1,6 +1,7 @@
-TARGET   = frontend
-CC       = g++
-CFLAGS   = -c -std=c++17 -Wall
+FRONT_TARGET = front
+BACK_TARGET  = back
+CC           = g++
+CFLAGS       = -c -std=c++17 -Wall
 
 MODULES = ./backend/processor
 
@@ -14,15 +15,17 @@ PREF_STAT = ./logs/log_pics/
 
 STR_LIB_DIR = ./my_str_func/
 
+##################################################################################################################
+
 #Str func
 STR_LIB_SRC = $(wildcard $(STR_LIB_DIR)*.cpp)
 OBJ_STR_LIB = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(STR_LIB_SRC))
-#Graphviz files
-GR_LIB   = $(wildcard $(GR_DIR)*.cpp)
-OBJ_LIB  = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(GR_LIB))
 #Tree files
 TREE_SRC = $(wildcard $(TREE_DIR)*.cpp)
 OBJ_TREE = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(TREE_SRC))
+#Graphviz files
+GR_LIB   = $(wildcard $(GR_DIR)*.cpp)
+OBJ_LIB  = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(GR_LIB))
 #Logs files
 LOGS_SRC = $(wildcard $(LOGS_DIR)*.cpp)
 OBJ_LOGS = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(LOGS_SRC))
@@ -33,18 +36,33 @@ OBJ_FRONT= $(patsubst $(PREF_OBJ)%.cpp, %.o, $(FRONT_SRC))
 BACK_SRC = $(wildcard $(BACK_DIR)*.cpp)
 OBJ_BACK = $(patsubst $(PREF_OBJ)%.cpp, %.o, $(BACK_SRC))
 
+##################################BACK_AND_FRONT################################################################################
+all: front back
 
-front: $(TARGET)
 
-$(TARGET):  $(OBJ)  $(OBJ_TREE) $(OBJ_STR_LIB)  $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)
-	$(CC) -o $(TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_STR_LIB) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)
+front: $(FRONT_TARGET)
+$(FRONT_TARGET):  $(OBJ) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_TREE) $(OBJ_FRONT) $(OBJ_STR_LIB)
+	$(CC) -o $(FRONT_TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)  $(OBJ_STR_LIB)
 
 $(PREF_OBJ)%.o : %.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
 
-full_ver:
+back: $(BACK_TARGET)
+$(BACK_TARGET):  $(OBJ) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_TREE) $(OBJ_BACK) $(OBJ_STR_LIB)
+	$(CC) -o $(BACK_TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_BACK)  $(OBJ_STR_LIB)
+
+$(PREF_OBJ)%.o : %.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
+###################################################################################################################
+
+prog:
+	./front
+	./back
 	for dir in $(MODULES); do $(MAKE) -C $$dir; done
+
+################################PHONIES################################################################################
 
 .PHONY : valgrind
 valgrind:
@@ -57,4 +75,4 @@ graphviz:
 
 .PHONY : clean
 clean:
-	rm -rf $(PREF_OBJ)*.o $(TARGET) *.aux *.log vgcore.*
+	rm -rf $(PREF_OBJ)*.o  $(FRONT_TARGET) $(BACK_TARGET) *.aux *.log vgcore.*

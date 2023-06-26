@@ -10,7 +10,7 @@
 
 #include "tree_define.h"
 #include "./graph_lib/graphviz.h"
-#include "../logs/log_file.h"
+//  #include "../logs/log_file.h"
 #include "my_ASSERT.h"
 
 #define BUF_OF_64_ELEM 64

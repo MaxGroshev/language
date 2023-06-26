@@ -1,5 +1,5 @@
 push [0]
-push 50
+push 66
 pop [0]
 push [1]
 push 88

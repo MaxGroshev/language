@@ -2,8 +2,8 @@
 
 int main ()
 {
-    log_init ("../logs/front_log.html");
-    char* buffer = read_file ("../lang.txt");
+    log_init ("./logs/front_log.html");
+    char* buffer = read_file ("./lang.txt");
 
 //INIT_OF_STRUCT_WITH_LEXEMS-------------------------------------------------------------------------------
 
