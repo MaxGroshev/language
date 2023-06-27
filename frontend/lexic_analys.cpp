@@ -45,7 +45,6 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("then",   OP_THEN,   buffer, &pos_in_buf, lex_stat);
         is_this_op ("return", OP_RETURN, buffer, &pos_in_buf, lex_stat);
 
-
         if (l_strncomp (buffer + pos_in_buf, "print", strlen ("print"), STR_SKIP_SPACE, &pos_in_buf))
         {
             add_std_lib_func (lex_stat, LIB_PRINT);
@@ -53,6 +52,10 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         if (l_strncomp (buffer + pos_in_buf, "writeln", strlen ("writeln"), STR_SKIP_SPACE, &pos_in_buf))
         {
             add_std_lib_func (lex_stat, LIB_WRITELN);
+        }
+        if (l_strncomp (buffer + pos_in_buf, "sqrt", strlen ("sqrt"), STR_SKIP_SPACE, &pos_in_buf))
+        {
+            add_std_lib_func (lex_stat, LIB_SQR);
         }
         if (l_strncomp   (buffer + pos_in_buf, "var", strlen ("var"), STR_SKIP_SPACE, &pos_in_buf))
         {
@@ -77,6 +80,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op (")",  OP_CLOSE_BR, buffer, &pos_in_buf, lex_stat);
 
         is_this_op ("==", OP_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
+        is_this_op ("!=", OP_N_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">=", OP_ABOVE_EQ, buffer, &pos_in_buf, lex_stat);
         is_this_op ("<=", OP_LESS_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">",  OP_ABOVE,    buffer, &pos_in_buf, lex_stat);

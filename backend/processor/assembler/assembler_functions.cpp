@@ -311,6 +311,11 @@ void translate_com (struct token* commands, const size_t count_of_com, const siz
             fprintf (num_com, "%d\n", ADD);
             cmd_array[cmd_size] = ADD;
         }
+        else if (strcmp (commands[cur_elem].com, "sub\r") == 0)
+        {
+            fprintf (num_com, "%d\n", SUB);
+            cmd_array[cmd_size] = SUB;
+        }
         else if (strcmp (commands[cur_elem].com, "mul\r") == 0)
         {
             fprintf (num_com, "%d\n", MUL);

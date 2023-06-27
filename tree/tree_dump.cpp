@@ -29,13 +29,16 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
     {
         graph_dump_set->nodes->fillcolor = "#DC143C";
 
-        switch ( (int) parent->value)
+        switch ((int) parent->value)
         {
             case LIB_PRINT:
                 print_str_node (TREE_DUMP_SET, "print");
                 break;
             case LIB_WRITELN:
                 print_str_node (TREE_DUMP_SET, "writeln");
+                break;
+            case LIB_SQR:
+                print_str_node (TREE_DUMP_SET, "sqr");
                 break;
             default:
                 print_str_node (TREE_DUMP_SET, parent->name);
@@ -52,6 +55,9 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
                 break;
             case OP_COMP_EQ:
                 print_str_node (TREE_DUMP_SET, "==");
+                break;
+            case OP_N_COMP_EQ:
+                print_str_node (TREE_DUMP_SET, "!=");
                 break;
             case OP_LESS:
                 print_str_node (TREE_DUMP_SET, "\\<");

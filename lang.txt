@@ -1,9 +1,18 @@
 func_meow ()
 begin:
-    var el = 66;
-    var bo = 88 + 4;
-    var k =  64;
-    var x  = el + bo;
-    print (k);
+    var a = 1;
+    var b = 2;
+    var c = 1;
+
+    var D = b*b - 4 * a * c;
+    var fr = (-b + sqrt (D)) / (2 * a);
+    var sr = (-b - sqrt (D)) / (2 * a);
+
+    if fr != sr then
+    begin:
+        print (fr);
+    end!
+
+    print (sr);
 end!
 $

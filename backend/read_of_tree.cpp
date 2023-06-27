@@ -28,6 +28,7 @@ tree_node_t* build_of_tree (char* tree_buffer)
     if (IS_THIS_OPER (";"))   return tree_new_op_node (OP_GART_N);
     if (IS_THIS_OPER ("nil")) return NULL;
     if (IS_THIS_OPER ("=="))  return tree_new_op_node (OP_COMP_EQ);
+    if (IS_THIS_OPER ("!="))  return tree_new_op_node (OP_N_COMP_EQ);
     if (IS_THIS_OPER (">="))  return tree_new_op_node (OP_ABOVE_EQ);
     if (IS_THIS_OPER ("<="))  return tree_new_op_node (OP_LESS_EQ);
     if (IS_THIS_OPER (">"))   return tree_new_op_node (OP_ABOVE);
@@ -70,6 +71,7 @@ tree_node_t* build_of_tree (char* tree_buffer)
         if      (IS_THIS_OPER ("meow"))    strncpy (func_node->name, "meow", strlen ("meow"));
         else if (IS_THIS_OPER ("print"))   func_node->value    =  LIB_PRINT;
         else if (IS_THIS_OPER ("writeln")) func_node->value    =  LIB_WRITELN;
+        else if (IS_THIS_OPER ("sqrt"))     func_node->value    =  LIB_SQR;
 
         return func_node;
     }

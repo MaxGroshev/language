@@ -64,12 +64,16 @@ void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem
                 stack_add (box, elem);
                 break;
 
+            case SUB:
+                stack_sub (box);
+                break;
+
             case MUL:
                 stack_mul (box, elem);
                 break;
 
             case DIV:
-                stack_div (box, elem);
+                stack_div (box);
                 break;
 
             case SQRT:
@@ -201,6 +205,14 @@ void stack_add (stack_t* box, double elem)
     STACK_CHECK
 }
 
+void stack_sub (stack_t* box)
+{
+    double s_elem = stack_pop (box);
+    double r_elem = stack_pop (box);
+    stack_push (box, r_elem - s_elem);
+    STACK_CHECK
+}
+
 void stack_mul (stack_t* box, double elem)
 {
     elem =  stack_pop (box);
@@ -209,11 +221,11 @@ void stack_mul (stack_t* box, double elem)
     STACK_CHECK
 }
 
-void stack_div (stack_t* box, double elem)
+void stack_div (stack_t* box)
 {
-    elem =  stack_pop (box);
-    elem /= stack_pop (box);
-    stack_push (box, elem);
+    double divisor   = stack_pop (box);
+    double divisible = stack_pop (box);
+    stack_push (box, divisible / divisor);
     STACK_CHECK
 }
 

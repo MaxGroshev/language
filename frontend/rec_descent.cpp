@@ -51,9 +51,7 @@ tree_node_t* get_func (lex_stat_t* lex_stat, prog_data_t* prog_stat)
             return func_node;
         }
         printf ("empty_func %d\n", lex_stat->lexems[cur_lexem].node_type);
-
-            return func_node;
-
+        return func_node;
     }
     return get_operator (lex_stat, prog_stat);
 }
@@ -120,10 +118,11 @@ tree_node_t* get_comp (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     tree_node_t* sign_node = get_comma (lex_stat, prog_stat);
 
-    if ((lex_stat->lexems[cur_lexem].node_type == OP_COMP_EQ) ||
-        (lex_stat->lexems[cur_lexem].node_type == OP_LESS)    ||
-        (lex_stat->lexems[cur_lexem].node_type == OP_ABOVE)   ||
-        (lex_stat->lexems[cur_lexem].node_type == OP_ABOVE_EQ)||
+    if ((lex_stat->lexems[cur_lexem].node_type == OP_COMP_EQ)   ||
+        (lex_stat->lexems[cur_lexem].node_type == OP_N_COMP_EQ) ||
+        (lex_stat->lexems[cur_lexem].node_type == OP_LESS)      ||
+        (lex_stat->lexems[cur_lexem].node_type == OP_ABOVE)     ||
+        (lex_stat->lexems[cur_lexem].node_type == OP_ABOVE_EQ)  ||
         (lex_stat->lexems[cur_lexem].node_type == OP_LESS_EQ))
     {
         tree_node_t* comp_node = &lex_stat->lexems[cur_lexem];
@@ -166,6 +165,11 @@ tree_node_t* get_ident (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         cur_lexem++;
         return &lex_stat->lexems[cur_lexem - 1];
     }
+    // if (lex_stat->lexems[cur_lexem].node_type == TYPE_VAR)
+    // {
+    //     cur_lexem++;
+    //     return &lex_stat->lexems[cur_lexem - 1];
+    // }
     else
     {
         return get_num (lex_stat, prog_stat);
@@ -191,15 +195,17 @@ tree_node_t* get_comma (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 tree_node_t* get_pm_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     tree_node_t* l_node = get_md_sign (lex_stat, prog_stat);
-    if (lex_stat->lexems[cur_lexem].node_type == OP_ADD || lex_stat->lexems[cur_lexem].node_type == OP_SUB)
+    while (lex_stat->lexems[cur_lexem].node_type == OP_ADD || lex_stat->lexems[cur_lexem].node_type == OP_SUB)
     {
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
         tree_node_t* r_node = get_md_sign (lex_stat, prog_stat);
-        tree_link_r (operation, r_node);
-        tree_link_l (operation, l_node);
-
-        return operation;
+        printf ("soooo:%d\n", lex_stat->lexems[cur_lexem].node_type );
+        if (operation->node_type == OP_ADD)
+        {
+            l_node = tree_new_op_node (OP_ADD, l_node, r_node);
+        }
+        else l_node = tree_new_op_node (OP_SUB, l_node, r_node);
     }
     return l_node;
 }
@@ -212,10 +218,11 @@ tree_node_t* get_md_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
         tree_node_t* r_node = get_deg (lex_stat, prog_stat);
-        tree_link_r (operation, r_node);
-        tree_link_l (operation, l_node);
-
-        return operation;
+        if (operation->node_type == OP_MUL)
+        {
+            l_node = tree_new_op_node (OP_MUL, l_node, r_node);
+        }
+        else l_node = tree_new_op_node (OP_DIV, l_node, r_node);
     }
     return l_node;
 }
@@ -223,15 +230,12 @@ tree_node_t* get_md_sign (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 tree_node_t* get_deg (lex_stat_t* lex_stat, prog_data_t* prog_stat)
 {
     tree_node_t* l_node = get_func (lex_stat, prog_stat);
-    if (lex_stat->lexems[cur_lexem].node_type == OP_POW)
+    while (lex_stat->lexems[cur_lexem].node_type == OP_POW)
     {
         tree_node_t* operation = &lex_stat->lexems[cur_lexem];
         cur_lexem++;
         tree_node_t* r_node = get_deg (lex_stat, prog_stat);
-        tree_link_r (operation, r_node);
-        tree_link_l (operation, l_node);
-
-        return operation;
+        l_node = tree_new_op_node (OP_POW, l_node, r_node);
     }
     return l_node;
 }

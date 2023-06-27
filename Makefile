@@ -64,9 +64,13 @@ prog:
 
 ################################PHONIES################################################################################
 
-.PHONY : valgrind
-valgrind:
-	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./$(TARGET)
+.PHONY : front_valgrind
+front_valgrind:
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./front
+
+.PHONY : back_valgrind
+front_valgrind:
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./back
 
 .PHONY : graphviz
 graphviz:

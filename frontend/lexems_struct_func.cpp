@@ -34,7 +34,6 @@ int prog_stat_init (prog_data_t* prog_stat)
 
 int lexems_resize (lex_stat_t* lex_stat)
 {
-    printf ("RESIZE%d %d\n", lex_stat->lex_capacity, lex_stat->lex_size);
     int prev_capacity =  lex_stat->lex_capacity;
     lex_stat->lex_capacity *= 2;
     tree_node_t* _lexems_resize  = (tree_node_t*) realloc (lex_stat->lexems, lex_stat->lex_capacity * sizeof (tree_node_t));

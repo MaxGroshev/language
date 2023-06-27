@@ -36,6 +36,7 @@ enum code_of_com
     OUT    = 5,
     DIV    = 6,
     SQRT   = 7,
+    SUB    = 8,
     PUSHR  = 11,  //push of register
     PUSHM  = 12,  //push from RAM
     PUSHRM = 13,  //push from RAM from cell with num of reg

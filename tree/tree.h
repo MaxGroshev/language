@@ -52,6 +52,7 @@ enum NODE_TYPE
 
     LIB_PRINT   = 300,
     LIB_WRITELN = 301,
+    LIB_SQR     = 302,
 
     //OPERATORS
     OP_IF      = 105,
@@ -74,15 +75,15 @@ enum NODE_TYPE
     OP_LESS     = 60,
     OP_EQ       = 61,
     OP_COMP_EQ  = 62,
-    OP_ABOVE    = 63,
-    OP_ABOVE_EQ = 64,
-    OP_LESS_EQ  = 65,
+    OP_N_COMP_EQ= 63,
+    OP_ABOVE    = 64,
+    OP_ABOVE_EQ = 65,
+    OP_LESS_EQ  = 66,
 
     //MATH_FUNC:
     OP_SIN  = 50,
     OP_COS  = 51,
     OP_LN   = 52,
-    OP_SQR  = 54,
     CONST_EXP = 101,
     OP_LOG  = 56,
     OP_TG   = 57,

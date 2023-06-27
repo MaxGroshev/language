@@ -26,6 +26,7 @@ enum code_of_com
     OUT    = 5,
     DIV    = 6,
     SQRT   = 7,
+    SUB    = 8,
     PUSHR  = 11,  //push of register
     PUSHM  = 12,  //push from RAM
     PUSHRM = 13,  //push from RAM from cell with num of reg
@@ -51,6 +52,7 @@ enum code_of_com
 void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem);
 int* read_bin_file (processor* cpu);
 void stack_add     (stack_t* box, double elem);
+void stack_sub     (stack_t* box);
 void stack_mul     (stack_t* box, double elem);
-void stack_div     (stack_t* box, double elem);
+void stack_div     (stack_t* box);
 void find_sqrt     (stack_t* box, double elem);

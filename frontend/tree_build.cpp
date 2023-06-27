@@ -36,7 +36,8 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
             }
             else if (tree_node->value == LIB_PRINT)   fprintf (lang_std, "#print");
             else if (tree_node->value == LIB_WRITELN) fprintf (lang_std, "#writeln");
-            else fprintf (lang_std, "func_%s", tree_node->name);
+            else if (tree_node->value == LIB_SQR)     fprintf (lang_std, "#sqrt");
+            else fprintf (lang_std, "#func_%s", tree_node->name);
             break;
         }
 	    case OP_GART_N:     fprintf (lang_std, ";");      break;
@@ -54,6 +55,7 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
         case OP_ABOVE_EQ:   fprintf (lang_std, ">=");     break;
         case OP_LESS_EQ:    fprintf (lang_std, "<=");     break;
         case OP_COMP_EQ:    fprintf (lang_std, "==");     break;
+        case OP_N_COMP_EQ:  fprintf (lang_std, "!=");     break;
 
         //case OP_BEGIN:      fprintf (lang_std, ";");      break;
         case OP_END:        fprintf (lang_std, ";");      break;
