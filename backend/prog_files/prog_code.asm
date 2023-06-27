@@ -5,48 +5,33 @@ push [1]
 push 2
 pop [1]
 push [2]
-push 1
+push -1
+push 3
+mul
 pop [2]
-push [3]
-push [1]
-push [1]
-mul
-push 4
 push [0]
-mul
-push [2]
-mul
-sub
-pop [3]
-push [4]
-push -1
 push [1]
-mul
-push [3]
-sqrt
-add
-push 2
+je  :0
 push [0]
-mul
-div
-pop [4]
-push [5]
-push -1
 push [1]
-mul
-push [3]
-sqrt
-sub
-push 2
-push [0]
-mul
-div
-pop [5]
-push [4]
-push [5]
-je :1 
-push [4]
+jb  :1
+push [1]
 out
 :1
-push [5]
+push [0]
 out
+:0
+push [2]
+push 0
+jb  :2
+push [2]
+push -1
+push 1
+mul
+jb  :3
+push [2]
+out
+:3
+push [0]
+out
+:2

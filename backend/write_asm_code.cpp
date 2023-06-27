@@ -1,62 +1,108 @@
 #include "backend.h"
 
-int write_asm_code (tree_node_t* prog_tree, FILE* prog_file)
+int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
 {
+    static int num = 1;
     if (prog_tree->left != NULL)
     {
-        write_asm_code (prog_tree->left, prog_file);
+        write_asm_code (prog_tree->left, prog_file, prog_data);
     }
     if (prog_tree->right != NULL)
     {
-        write_asm_code (prog_tree->right, prog_file);
+        write_asm_code (prog_tree->right, prog_file, prog_data);
     }
 
     switch (prog_tree->node_type)
     {
         case TYPE_NUM:
             fprintf (prog_file, "push %lg\r\n", prog_tree->value);
-            break;
+            return 1;
         case OP_EQ:
             fprintf (prog_file, "pop [%d]\r\n", prog_tree->left->num_of_var);
-            break;
+            return 1;
         case TYPE_VAR:
             fprintf (prog_file, "push [%d]\r\n", prog_tree->num_of_var);
-            break;
-        case TYPE_FUNC:
-        {
-//             if (strcmp ("meow", prog_tree->name) == 0)
-//             {
-//                 fprintf (prog_file, "#%s", prog_tree->name);
-//                 break;
-//             }
-            if      (prog_tree->value == LIB_PRINT)   fprintf (prog_file, "out\r\n");
-            else if (prog_tree->value == LIB_WRITELN) fprintf (prog_file, "in\r\n");
-            else if (prog_tree->value == LIB_SQR)     fprintf (prog_file, "sqrt\r\n");
-           // else fprintf (prog_file, "func_%s", prog_tree->name);
-            break;
-        }
+            return 1;
 
+        case OP_IF:
+            if (prog_data->label < prog_data->cond_depth) prog_data->label = prog_data->cond_depth;
+            printf ("FUCK %d\n", prog_data->cond_depth);
+            prog_data->cond_depth--;
+            fprintf (prog_file, ":%d\r\n", prog_data->cond_depth);
 
+            return 1;
+        //case OP_COMMA:      fprintf (prog_file, ",");           break; // do not know
+        //case OP_RETURN:     fprintf (prog_file, "return"); break;
+    }
+    if      (math_opr_def (prog_tree->node_type, prog_file)) return 1;
+    else if (func_def     (prog_tree, prog_file))            return 1;
+    else if (cond_jmp_def (prog_tree->node_type, prog_file, prog_data))
+    {
+        prog_data->cond_depth++;
+        return 1;
+    }
+    return 0;
+}
 
-        //case OP_COMMA:      fprintf (prog_file, ",");          break; // do not know
-        case OP_ADD:        fprintf (prog_file, "add\r\n");      break;
-// 	    case OP_GART_N:     fprintf (prog_file, ";");      break;
-        case OP_SUB:        fprintf (prog_file, "sub\r\n");      break;
-        case OP_MUL:        fprintf (prog_file, "mul\r\n");      break;
-        case OP_DIV:        fprintf (prog_file, "div\r\n");      break;
-//         case OP_POW:        fprintf (prog_file, "^");      break;
+//========================================================================================
 
+int math_opr_def (int node_type, FILE* prog_file)
+{
 
-        case OP_IF:         fprintf (prog_file, ":1\n");     break;
-//         case OP_LESS:       fprintf (prog_file, "<");      break;
-//         case OP_ABOVE:      fprintf (prog_file, ">");      break;
-
-//         case OP_ABOVE_EQ:   fprintf (prog_file, ">=");     break;
-//         case OP_LESS_EQ:    fprintf (prog_file, "<=");     break;
-        case OP_N_COMP_EQ:    fprintf (prog_file, "je :1 \n");     break;
-//
-//         case OP_RETURN:     fprintf (prog_file, "return"); break;
+    switch (node_type)
+    {
+        case OP_ADD:        fprintf (prog_file, "add\r\n");      return 1;
+        case OP_SUB:        fprintf (prog_file, "sub\r\n");      return 1;
+        case OP_MUL:        fprintf (prog_file, "mul\r\n");      return 1;
+        case OP_DIV:        fprintf (prog_file, "div\r\n");      return 1;
+//      case OP_POW:        fprintf (prog_file, "^");            return 1;
     }
 
+    return 0;
+}
+
+int func_def (tree_node_t* prog_tree, FILE* prog_file)
+{
+    if (prog_tree->node_type == TYPE_FUNC)
+    {
+            // if (strcmp ("meow", prog_tree->name) == 0)
+        // {
+        //     fprintf (prog_file, "#%s", prog_tree->name);
+        //     break;
+        // }
+        if      (prog_tree->value == LIB_PRINT)   fprintf (prog_file, "out\r\n");
+        else if (prog_tree->value == LIB_WRITELN)
+        {
+            fprintf (prog_file, "in\r\n");
+            fprintf (prog_file, "pop [%d]\r\n", prog_tree->left->num_of_var);
+        }
+        else if (prog_tree->value == LIB_SQR)     fprintf (prog_file, "sqrt\r\n");
+        //else fprintf (prog_file, "func_%s", prog_tree->name);
+        return 1;
+    }
+
+    return 0;
+}
+
+
+int cond_jmp_def (int node_type, FILE* prog_file, prog_data_t* prog_data)
+{
+    int ret_val = 0;
+    switch (node_type)
+    {
+        case OP_LESS:       fprintf (prog_file, "jb  :"); ret_val = 1; break;
+        case OP_ABOVE:      fprintf (prog_file, "ja  :"); ret_val = 1; break;
+        case OP_ABOVE_EQ:   fprintf (prog_file, "jae :"); ret_val = 1; break;
+        case OP_LESS_EQ:    fprintf (prog_file, "jbe :"); ret_val = 1; break;
+        case OP_COMP_EQ:    fprintf (prog_file, "jne :"); ret_val = 1; break;
+        case OP_N_COMP_EQ:  fprintf (prog_file, "je  :"); ret_val = 1; break;
+    }
+
+    if (ret_val == 1)
+    {
+        if (prog_data->label > prog_data->cond_depth) prog_data->cond_depth = prog_data->label;
+        fprintf (prog_file, "%d\r\n", prog_data->cond_depth);
+        return ret_val;
+    }
     return 0;
 }

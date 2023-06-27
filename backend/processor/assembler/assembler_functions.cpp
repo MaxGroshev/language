@@ -90,7 +90,6 @@ void push_def (struct token* commands, char* cur_tok, size_t* count_of_token, si
         if ((strchr (cur_tok, '[') != NULL) && (strchr (cur_tok, ']') != NULL)) //make awful push_def better
         {
             commands[cur_elem - 1].val = cur_tok;
-            printf ("%s\n", commands[cur_elem - 1].val);
 
             if (strcmp (commands[cur_elem - 1].com, "push") == 0)
             {
@@ -105,7 +104,6 @@ void push_def (struct token* commands, char* cur_tok, size_t* count_of_token, si
     else if ((strchr (cur_tok, '[') != NULL) && (strchr (cur_tok, ']') != NULL))
     {
         commands[cur_elem - 1].val = cur_tok;
-        printf ("%s\n", commands[cur_elem - 1].val);
 
         if (strcmp (commands[cur_elem - 1].com, "push") == 0)
         {
@@ -131,7 +129,6 @@ void pop_def (struct token* commands, char* cur_tok, size_t* count_of_token, siz
         if ((strchr (cur_tok, '[') != NULL) && (strchr (cur_tok, ']') != NULL)) //make awful push_def better
         {
             commands[cur_elem - 1].val = cur_tok;
-            printf ("%s\n", commands[cur_elem - 1].val);
 
             if (strcmp (commands[cur_elem - 1].com, "pop") == 0)
             {
@@ -146,7 +143,6 @@ void pop_def (struct token* commands, char* cur_tok, size_t* count_of_token, siz
     else if ((strchr (cur_tok, '[') != NULL) && (strchr (cur_tok, ']') != NULL))
     {
         commands[cur_elem - 1].val = cur_tok;
-        printf ("%s\n", commands[cur_elem - 1].val);
 
         if (strcmp (commands[cur_elem - 1].com, "pop") == 0)
         {
@@ -200,7 +196,6 @@ void translate_com (struct token* commands, const size_t count_of_com, const siz
         }
         else if (strcmp (commands[cur_elem].com, "in\r") == 0)
         {
-            printf ("in\n");
             fprintf (num_com, "%d\n", IN);
             cmd_array[cmd_size] = IN;
         }
@@ -219,7 +214,6 @@ void translate_com (struct token* commands, const size_t count_of_com, const siz
         {
             if (sscanf (commands[cur_elem].val, "[%d", &value) == 1)
             {
-                printf ("%s", commands[cur_elem].val);
                 fprintf (num_com, "%d %d\n", PUSHM, value);
                 cmd_array[cmd_size] = PUSHM;
                 cmd_size++;
@@ -264,7 +258,6 @@ void translate_com (struct token* commands, const size_t count_of_com, const siz
         {
             if (sscanf (commands[cur_elem].val, "[%d", &value) == 1)
             {
-                printf ("%s", commands[cur_elem].val);
                 fprintf (num_com, "%d %d\n", POPM, value);
                 cmd_array[cmd_size] = POPM;
                 cmd_size++;

@@ -10,9 +10,11 @@ int main ()
 
 //WRITING_OF_ASM_CODE-----------------------------------------------------------------------------
 
+    prog_data_t prog_data = {};
+
     FILE* prog_file = fopen ("./backend/prog_files/prog_code.asm", "w");
     MY_ASSERT (prog_file != NULL);
-    write_asm_code (prog_tree, prog_file);
+    write_asm_code (prog_tree, prog_file, &prog_data);
 
 //DTOR_OF_PROG_INFORM-----------------------------------------------------------------------------------------------------------------------------------
 

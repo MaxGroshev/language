@@ -2,17 +2,25 @@ func_meow ()
 begin:
     var a = 1;
     var b = 2;
-    var c = 1;
+    var c = -3;
 
-    var D = b*b - 4 * a * c;
-    var fr = (-b + sqrt (D)) / (2 * a);
-    var sr = (-b - sqrt (D)) / (2 * a);
-
-    if fr != sr then
+    if a != b then
     begin:
-        print (fr);
+        if a < b then
+        begin:
+            print (b);
+        end!
+        print (a);
     end!
 
-    print (sr);
+    if c < 0 then
+    begin:
+        if c < -1 then
+        begin:
+            print (c);
+        end!
+        print (a);
+    end!
+
 end!
 $
