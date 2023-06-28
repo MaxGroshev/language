@@ -10,7 +10,6 @@
 
 #include "tree_define.h"
 #include "./graph_lib/graphviz.h"
-//  #include "../logs/log_file.h"
 #include "my_ASSERT.h"
 
 #define BUF_OF_64_ELEM 64
@@ -25,7 +24,8 @@ typedef double tree_data_type;
 struct tree_node_t
 {
     int            node_type;
-    int            num_of_var;
+    int            num_of_var_func;
+    int            decloration;
     char           name[BUF_OF_64_ELEM];
     tree_data_type value;
     tree_node_t*   right;
@@ -39,6 +39,14 @@ struct tree_t
 };
 
 //---------------------------------------------------CODE_OF_NODES-------------------------------------------------------------------------------------------------------------------------------------------
+
+enum DECL_MENTION_OF_VAR_OR_FUNC
+{
+    FUNC_NOT_EXIST= -2,
+    VAR_NOT_EXIST = -1,
+    L_MENTION     = 2,
+    L_DECL        = 1,
+};
 
 enum NODE_TYPE
 {

@@ -22,6 +22,8 @@ int prog_stat_init (prog_data_t* prog_stat)
     prog_stat->var_capacity  = 100;
     prog_stat->func_capacity = 10;
     prog_stat->var_num       = 0;
+    prog_stat->func_num      = 1;  //Because main (meow) is default zero func
+
 
     prog_stat->decl_vars  = (prog_var_t*)  calloc (prog_stat->var_capacity,  sizeof (prog_var_t));
     prog_stat->decl_funcs = (prog_func_t*) calloc (prog_stat->func_capacity, sizeof (prog_func_t));

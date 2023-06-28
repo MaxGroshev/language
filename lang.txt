@@ -1,26 +1,22 @@
+func_moor (var val)
+begin:
+    var k = 90;
+    print (k);
+    return k;
+end!
+
 func_meow ()
 begin:
-    var a = 1;
+    var a = 91;
     var b = 2;
-    var c = -3;
+    var c = -300;
 
-    if a != b then
+    moor ();
+    if a != k then
     begin:
-        if a < b then
-        begin:
-            print (b);
-        end!
-        print (a);
+        print (moor (b));
     end!
 
-    if c < 0 then
-    begin:
-        if c < -1 then
-        begin:
-            print (c);
-        end!
-        print (a);
-    end!
-
+    return 0;
 end!
 $

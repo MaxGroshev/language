@@ -31,7 +31,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
             lex_stat->lex_size++;
             break;
         }
-        while (buffer[pos_in_buf]  == 32) pos_in_buf++;
+        while (buffer[pos_in_buf] == 32) pos_in_buf++;
         if    (buffer[pos_in_buf] == '\n' || buffer[pos_in_buf] == '\r' || buffer[pos_in_buf] == '\t')
         {
             prog_stat->str_num++;
@@ -72,7 +72,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         if ((buffer[pos_in_buf] >= 'a' && buffer[pos_in_buf] <= 'z') ||
             (buffer[pos_in_buf] >= 'A' && buffer[pos_in_buf] <= 'Z'))
         {
-            add_exist_var (buffer, &pos_in_buf, prog_stat, lex_stat);
+            def_var_or_func (buffer, &pos_in_buf, prog_stat, lex_stat);
         }
 
         is_this_op (";",  OP_GART_N,   buffer, &pos_in_buf, lex_stat);
@@ -80,7 +80,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op (")",  OP_CLOSE_BR, buffer, &pos_in_buf, lex_stat);
 
         is_this_op ("==", OP_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
-        is_this_op ("!=", OP_N_COMP_EQ,  buffer, &pos_in_buf, lex_stat);
+        is_this_op ("!=", OP_N_COMP_EQ,buffer, &pos_in_buf, lex_stat);
         is_this_op (">=", OP_ABOVE_EQ, buffer, &pos_in_buf, lex_stat);
         is_this_op ("<=", OP_LESS_EQ,  buffer, &pos_in_buf, lex_stat);
         is_this_op (">",  OP_ABOVE,    buffer, &pos_in_buf, lex_stat);
@@ -117,14 +117,14 @@ int is_negative_val (lex_stat_t* lex_stat)
     return 0;
 }
 
-int is_exist_var (prog_data_t* prog_stat, const char* var_name)
+int is_exist_name (prog_data_t* prog_stat, const char* name, int type)
 {
-    if (var_name != NULL)
+    if (type == TYPE_VAR)
     {
         for (int num_of_var = 0; num_of_var < prog_stat->var_num; num_of_var++)
         {
             MY_ASSERT (prog_stat->decl_vars != NULL)
-            if (strcmp (var_name, prog_stat->decl_vars[num_of_var].name) == 0)
+            if (strcmp (name, prog_stat->decl_vars[num_of_var].name) == 0)
             {
                 printf ("COMPARED by name: %s\n", prog_stat->decl_vars[num_of_var].name);
                 return num_of_var;
@@ -132,12 +132,24 @@ int is_exist_var (prog_data_t* prog_stat, const char* var_name)
         }
         return VAR_NOT_EXIST;
     }
-    return 1;
+    else if (type == TYPE_FUNC)
+    {
+        for (int num_of_func = 0; num_of_func < prog_stat->func_num; num_of_func++)
+        {
+            MY_ASSERT (prog_stat->decl_funcs != NULL)
+            if (strcmp (name, prog_stat->decl_funcs[num_of_func].name) == 0)
+            {
+                printf ("COMPARED by name: %s\n", prog_stat->decl_funcs[num_of_func].name);
+                return num_of_func;
+            }
+        }
+        return FUNC_NOT_EXIST;
+    }
+    return 0;
 }
+//=================================================================================================================================
 
-//=============================================ADDING_OF_MENTIONED_NAME_ELEMENTS=======================================================
-
-int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
+int def_var_or_func (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat)
 {
     int i = 0;
     for (; (buffer[*pos_in_buf] >= 'a' && buffer[*pos_in_buf] <= 'z') ||
@@ -149,19 +161,46 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
     }
     lex_stat->lexems[lex_stat->lex_size].name[i] = '\0';
 
-    int num_of_var = is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name);
+    int num_of_var = is_exist_name (prog_stat, lex_stat->lexems[lex_stat->lex_size].name, TYPE_VAR);
     if (num_of_var != VAR_NOT_EXIST)
     {
-        lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_VAR;
-        lex_stat->lexems[lex_stat->lex_size].num_of_var = num_of_var;
-        lex_stat->lex_size++;
-    }
-    else
-    {
-        memset (lex_stat->lexems[lex_stat->lex_size].name, '\0', BUF_OF_64_ELEM);
-        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+        add_exist_var (buffer, pos_in_buf, prog_stat, lex_stat, num_of_var);
         return 1;
     }
+    int num_of_func = is_exist_name (prog_stat, lex_stat->lexems[lex_stat->lex_size].name, TYPE_FUNC);
+    if (num_of_var != FUNC_NOT_EXIST)
+    {
+        add_exist_func (buffer, pos_in_buf, prog_stat, lex_stat, num_of_func);
+        return 1;
+    }
+
+    syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+    return 0;
+}
+
+
+//=============================================ADDING_OF_MENTIONED_NAME_ELEMENTS=======================================================
+
+int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat, int num_of_var)
+{
+    if (lex_stat->lex_capacity <= lex_stat->lex_size + 10) lexems_resize (lex_stat);
+
+    lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_VAR;
+    lex_stat->lexems[lex_stat->lex_size].num_of_var_func = num_of_var;
+    lex_stat->lex_size++;
+
+    return 0;
+}
+
+int add_exist_func (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat, int num_of_func)
+{
+    if (lex_stat->lex_capacity <= lex_stat->lex_size + 10) lexems_resize (lex_stat);
+
+    lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_FUNC;
+    lex_stat->lexems[lex_stat->lex_size].decloration= L_MENTION;
+    lex_stat->lexems[lex_stat->lex_size].num_of_var_func = num_of_func;
+    lex_stat->lex_size++;
+
     return 0;
 }
 
@@ -223,13 +262,13 @@ int add_new_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat
     lex_stat->lexems[lex_stat->lex_size].name[i]     = '\0';
 
     if (*pos_in_buf == start_pos ||
-        is_exist_var (prog_stat, lex_stat->lexems[lex_stat->lex_size].name) != VAR_NOT_EXIST)
+        is_exist_name (prog_stat, lex_stat->lexems[lex_stat->lex_size].name, TYPE_VAR) != VAR_NOT_EXIST)
     {
         syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
     }
     prog_stat->decl_vars[prog_stat->var_num].line  = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
-    lex_stat->lexems[lex_stat->lex_size].num_of_var= prog_stat->var_num;
+    lex_stat->lexems[lex_stat->lex_size].num_of_var_func= prog_stat->var_num;
     prog_stat->var_num++;
     lex_stat->lex_size++;
 
@@ -254,10 +293,22 @@ int add_new_func (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_sta
     prog_stat->decl_funcs[prog_stat->func_num].name[i] = '\0';
     lex_stat->lexems[lex_stat->lex_size].name[i]       = '\0';
 
-    if (*pos_in_buf == start_pos) syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
-
+    if (*pos_in_buf == start_pos ||
+        is_exist_name (prog_stat, lex_stat->lexems[lex_stat->lex_size].name, TYPE_FUNC) != FUNC_NOT_EXIST)
+    {
+        syntax_error (S_UNREC_SYNTAX_ERROR, buffer, CUR_POS_IN_PROG);
+    }
     prog_stat->decl_funcs[prog_stat->func_num].line = prog_stat->str_num;
-    lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_FUNC;
+    lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_FUNC;
+    lex_stat->lexems[lex_stat->lex_size].decloration= L_DECL;
+    lex_stat->lexems[lex_stat->lex_size].num_of_var_func = prog_stat->func_num;
+
+    printf ("%s\n", lex_stat->lexems[lex_stat->lex_size].name);
+    if (strcmp (lex_stat->lexems[lex_stat->lex_size].name, "meow\0") == 0)
+    {
+       //printf ("");
+        lex_stat->lexems[lex_stat->lex_size].num_of_var_func = 0;
+    }
     prog_stat->func_num++;
     lex_stat->lex_size++;
 

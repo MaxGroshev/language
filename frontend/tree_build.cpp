@@ -25,7 +25,7 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
             fprintf (lang_std, "%lg", tree_node->value);
             break;
         case TYPE_VAR:
-            fprintf (lang_std, "var%d", tree_node->num_of_var); //Just for a time: improve work with vars
+            fprintf (lang_std, "var%d", tree_node->num_of_var_func); //Just for a time: improve work with vars
             break;
         case TYPE_FUNC:
         {
@@ -37,7 +37,17 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
             else if (tree_node->value == LIB_PRINT)   fprintf (lang_std, "#print");
             else if (tree_node->value == LIB_WRITELN) fprintf (lang_std, "#writeln");
             else if (tree_node->value == LIB_SQR)     fprintf (lang_std, "#sqrt");
-            else fprintf (lang_std, "#func_%s", tree_node->name);
+            else
+            {
+                if (tree_node->decloration == L_DECL)
+                {
+                    fprintf (lang_std, "#dec_func%d", tree_node->num_of_var_func);
+                }
+                else if (tree_node->decloration == L_MENTION)
+                {
+                    fprintf (lang_std, "#func%d", tree_node->num_of_var_func);
+                }
+            }
             break;
         }
 	    case OP_GART_N:     fprintf (lang_std, ";");      break;

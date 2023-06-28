@@ -1,5 +1,4 @@
 #include "backend.h"
- // make lib with mutual functions: strtod; l_strncomp
 
 char* read_of_file (const char* file_dir)
 {
@@ -18,7 +17,7 @@ char* read_of_file (const char* file_dir)
 
 //=========================================================================================================================================================
 
-tree_node_t* build_of_tree (char* tree_buffer)
+tree_node_t* build_of_tree (char* tree_buffer, prog_data_t* prog_data)
 {
     static int pos_in_buf = 0;
 
@@ -60,26 +59,51 @@ tree_node_t* build_of_tree (char* tree_buffer)
         char buf[BUF_OF_64_ELEM];
         sprintf (buf, "var%d", num_of_var);
         strncpy (var_node->name, buf, BUF_OF_64_ELEM);
-        var_node->num_of_var = num_of_var;
+        var_node->num_of_var_func = num_of_var;
 
         return var_node;
     }
     if (IS_THIS_OPER ("#"))
     {
         tree_node_t* func_node = tree_new_op_node (TYPE_FUNC);
+        int decl = -1;
 
-        if      (IS_THIS_OPER ("meow"))    strncpy (func_node->name, "meow", strlen ("meow"));
+        if (IS_THIS_OPER ("meow"))
+        {
+            strncpy (func_node->name, "meow", strlen ("meow"));
+            func_node->num_of_var_func = 0;
+            func_node->decloration = L_DECL;
+            return func_node;
+        }
         else if (IS_THIS_OPER ("print"))   func_node->value    =  LIB_PRINT;
         else if (IS_THIS_OPER ("writeln")) func_node->value    =  LIB_WRITELN;
-        else if (IS_THIS_OPER ("sqrt"))     func_node->value    =  LIB_SQR;
+        else if (IS_THIS_OPER ("sqrt"))    func_node->value    =  LIB_SQR;
+        else if (IS_THIS_OPER ("dec_func")) decl = L_DECL;
+        else if (IS_THIS_OPER ("func"))     decl = L_MENTION;
+
+        if (decl == L_DECL || decl == L_MENTION)
+        {
+            int num_of_func = my_strtod (tree_buffer + pos_in_buf, &pos_in_buf);
+            char buf[BUF_OF_64_ELEM];
+            sprintf (buf, "func%d", num_of_func);
+            strncpy (func_node->name, buf, BUF_OF_64_ELEM);
+            func_node->num_of_var_func = num_of_func;
+
+            if (decl == L_DECL)
+            {
+                func_node->decloration = L_DECL;
+                prog_data->label++; //just to start if jmp from func calls
+            }
+            else if (decl == L_MENTION) func_node->decloration = L_MENTION;
+        }
 
         return func_node;
     }
     if (IS_THIS_OPER ("{"))
     {
-        tree_node_t* root   = build_of_tree (tree_buffer);
-        tree_node_t* l_node = build_of_tree (tree_buffer);
-        tree_node_t* r_node = build_of_tree (tree_buffer);
+        tree_node_t* root   = build_of_tree (tree_buffer, prog_data);
+        tree_node_t* l_node = build_of_tree (tree_buffer, prog_data);
+        tree_node_t* r_node = build_of_tree (tree_buffer, prog_data);
         if (l_node != NULL) tree_link_l (root, l_node);
         if (r_node != NULL) tree_link_r (root, r_node);
 

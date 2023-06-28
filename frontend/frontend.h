@@ -13,8 +13,8 @@ struct prog_data_t
     int func_capacity;
 
     int str_num  = 0;
-    int func_num = 0;
-    int var_num  = 0;
+    int func_num;
+    int var_num;
 
     struct prog_var_t*  decl_vars;
     struct prog_func_t* decl_funcs;
@@ -32,12 +32,6 @@ struct prog_func_t
     char name[BUF_OF_64_ELEM];
 };
 
-enum DECL_MENTION_OF_VAR_OR_FUNC
-{
-    VAR_NOT_EXIST = -1,
-    L_MENTION     = 0,
-    L_DECL        = 1,
-};
 
 //--------------------------------------------------------------------------------------------------
 
@@ -71,11 +65,14 @@ int lex_dtor             (lex_stat_t* lex_stat);
 //-------------------------------------TOKENIZATION_FUNC------------------------------------------------------------------
 
 int    is_this_op       (const char* str, int code_of_op, const char* buffer, int* pos_in_buf, lex_stat_t* lex_stat);
-int    is_exist_var     (prog_data_t* prog_stat, const char* var_name = NULL);
+int    is_exist_name    (prog_data_t* prog_stat, const char* name, int type);
 int    add_std_lib_func (lex_stat_t* lex_stat, int code_of_prog);
 int    add_new_num      (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat);
 int    add_new_var      (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat);
 int    add_new_func     (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat);
-int    add_exist_var    (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat);
+int    def_var_or_func  (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat);
+int    add_exist_var    (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat, int num_of_var);
+int    add_exist_func   (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat_t* lex_stat, int num_of_func);
+
 
 int    is_negative_val  (lex_stat_t* lex_stat);

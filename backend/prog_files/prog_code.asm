@@ -1,37 +1,33 @@
-push [0]
-push 1
-pop [0]
-push [1]
-push 2
-pop [1]
-push [2]
-push -1
-push 3
-mul
-pop [2]
-push [0]
-push [1]
-je  :0
-push [0]
-push [1]
-jb  :1
-push [1]
-out
+call :0
+hlt
 :1
 push [0]
+push [1]
+push 90
+pop  [1]
+push [1]
 out
+push [1]
+ret
 :0
 push [2]
-push 0
-jb  :2
-push [2]
+push 91
+pop  [2]
+push [3]
+push 2
+pop  [3]
+push [4]
 push -1
-push 1
+push 300
 mul
-jb  :3
+pop  [4]
+call :1
 push [2]
+push [1]
+je  :3
+push [3]
+call :1
 out
 :3
-push [0]
-out
-:2
+push 0
+ret

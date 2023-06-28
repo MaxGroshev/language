@@ -1,6 +1,6 @@
 #include "CPU.h"
 
-void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem)
+int dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem)
 {
     int* code_of_com = read_bin_file (cpu);
     int  code_of_reg = 0;
@@ -171,10 +171,11 @@ void dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem
                 break;
 
             case HLT:
-                break;
+                return 0;
         }
     }
     free (code_of_com);
+    return 0;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
