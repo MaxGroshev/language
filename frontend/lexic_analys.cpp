@@ -186,6 +186,7 @@ int add_exist_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_st
     if (lex_stat->lex_capacity <= lex_stat->lex_size + 10) lexems_resize (lex_stat);
 
     lex_stat->lexems[lex_stat->lex_size].node_type  = TYPE_VAR;
+    lex_stat->lexems[lex_stat->lex_size].decloration= L_MENTION;
     lex_stat->lexems[lex_stat->lex_size].num_of_var_func = num_of_var;
     lex_stat->lex_size++;
 
@@ -268,6 +269,7 @@ int add_new_var (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_stat
     }
     prog_stat->decl_vars[prog_stat->var_num].line  = prog_stat->str_num;
     lex_stat->lexems[lex_stat->lex_size].node_type = TYPE_VAR;
+    lex_stat->lexems[lex_stat->lex_size].decloration = L_DECL;
     lex_stat->lexems[lex_stat->lex_size].num_of_var_func= prog_stat->var_num;
     prog_stat->var_num++;
     lex_stat->lex_size++;
@@ -306,7 +308,6 @@ int add_new_func (char* buffer, int* pos_in_buf, prog_data_t* prog_stat, lex_sta
     printf ("%s\n", lex_stat->lexems[lex_stat->lex_size].name);
     if (strcmp (lex_stat->lexems[lex_stat->lex_size].name, "meow\0") == 0)
     {
-       //printf ("");
         lex_stat->lexems[lex_stat->lex_size].num_of_var_func = 0;
     }
     prog_stat->func_num++;

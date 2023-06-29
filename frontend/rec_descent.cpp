@@ -105,7 +105,6 @@ tree_node_t* get_begin (lex_stat_t* lex_stat, prog_data_t* prog_stat)
         printf ("-----%d------\n", lex_stat->lexems[cur_lexem + 1].node_type);
         if (lex_stat->lexems[cur_lexem].node_type == OP_END)
         {
-            printf ("I am here to end! %d\n", cur_lexem);
             return begin_node;
         }
     }

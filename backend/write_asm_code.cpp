@@ -2,10 +2,13 @@
 
 int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
 {
-    static int num = 1;
     if (prog_tree->node_type == TYPE_FUNC && prog_tree->decloration == L_DECL)
     {
         fprintf (prog_file, ":%d\r\n", prog_tree->num_of_var_func);
+        if (prog_tree->left != NULL)
+        {
+            prog_tree = func_decl_def (prog_tree, prog_file, prog_data);
+        }
     }
     if (prog_tree->left != NULL)
     {
@@ -18,11 +21,11 @@ int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_d
 
     switch (prog_tree->node_type)
     {
+        case OP_EQ:
+            fprintf (prog_file, "pop  [%d]\r\npop  ax\r\n", prog_tree->left->num_of_var_func);
+            return 1;
         case TYPE_NUM:
             fprintf (prog_file, "push %lg\r\n", prog_tree->value);
-            return 1;
-        case OP_EQ:
-            fprintf (prog_file, "pop  [%d]\r\n", prog_tree->left->num_of_var_func);
             return 1;
         case TYPE_VAR:
             fprintf (prog_file, "push [%d]\r\n", prog_tree->num_of_var_func);
@@ -63,6 +66,22 @@ int math_opr_def (int node_type, FILE* prog_file)
 
     return 0;
 }
+
+tree_node_t* func_decl_def (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
+{
+    // if (prog_tree->right != NULL)
+    // {
+    //     write_asm_code (prog_tree->right, prog_file, prog_data);
+    // }
+    // if (prog_tree->left != NULL)
+    // {
+    //     write_asm_code (prog_tree->left, prog_file, prog_data);
+    // }
+    fprintf (prog_file, "pop  [%d]\r\n", prog_tree->left->num_of_var_func);
+
+    return prog_tree->right;
+}
+
 
 int func_def (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
 {
