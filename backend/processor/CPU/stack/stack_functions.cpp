@@ -1,4 +1,4 @@
-#include "CPU.h"
+#include "int_stack.h"
 
 void stack_init (stack_t* box, stack_t* func_ret)
 {
@@ -7,7 +7,8 @@ void stack_init (stack_t* box, stack_t* func_ret)
     MY_ASSERT        (box->data != NULL);
     set_canary       (box);
 
-    func_ret->data = (type_of_elem*) calloc (10, sizeof (type_of_elem)); //size of ret value is not more then 10
+    func_ret->capacity = 10;
+    func_ret->data = (type_of_elem*) calloc (func_ret->capacity  + 1, sizeof (type_of_elem)); //size of ret value is not more then 10
     MY_ASSERT        (func_ret->data != NULL);
     set_canary       (func_ret);
     STACK_CHECK
@@ -15,7 +16,7 @@ void stack_init (stack_t* box, stack_t* func_ret)
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-void set_canary (stack_t* box) // this name is ok or not?
+void set_canary (stack_t* box)
 {
     if (box->counter == 0)
     {
@@ -25,7 +26,6 @@ void set_canary (stack_t* box) // this name is ok or not?
         box->canary_b            = CANARY_VAL;
         box->counter++;
     }
-
     else
     {
         box->data[0]             = CANARY_VAL;
@@ -38,8 +38,7 @@ void set_canary (stack_t* box) // this name is ok or not?
 void stack_push (stack_t*  box, double element)
 {
     STACK_CHECK
-
-    if (box->capacity  - 2 <= box->counter)
+    if (box->capacity  - 5 <= box->counter)
     {
         stack_resize (box);
     }
@@ -51,7 +50,6 @@ void stack_push (stack_t*  box, double element)
 
 double stack_pop (stack_t* box)
 {
-
     STACK_CHECK
     double element = box->data[--box->counter];
     element = element / 100;
@@ -67,7 +65,7 @@ void stack_resize (stack_t* box)
 {
     box->capacity *= 2;
     int* stack_resize = box->data;
-    stack_resize = (type_of_elem*) realloc (stack_resize , (box->capacity + 1) * sizeof (type_of_elem));
+    stack_resize = (type_of_elem*) realloc (stack_resize, (box->capacity + 1) * sizeof (type_of_elem));
     MY_ASSERT (stack_resize != NULL);
     box->data = stack_resize;
     set_canary (box);

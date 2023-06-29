@@ -38,7 +38,6 @@ int dispatch_task (stack_t* box, stack_t* func_ret, processor* cpu, double elem)
                 break;
 
             case POP:
-                i++;
                 stack_pop (box);
                 break;
 

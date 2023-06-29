@@ -1,4 +1,4 @@
-#include "CPU.h"
+#include "int_stack.h"
 
 int stack_check (stack_t* box)
 {
@@ -19,7 +19,6 @@ int stack_check (stack_t* box)
 
     if (box->canary_a != CANARY_VAL)
     {
-
         return CANARY_A_IS_DEAD;
     }
 

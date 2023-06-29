@@ -1,5 +1,12 @@
-#include "int_stack.h"
-#include "RAM_functions.h"
+#pragma once
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <sys/stat.h>
+
+#include "./stack/int_stack.h"
+#include "./RAM/RAM_functions.h"
 
 static const size_t count_of_reg = 4;
 

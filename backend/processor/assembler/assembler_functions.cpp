@@ -24,7 +24,7 @@ struct token* read_word_com (size_t* count_of_com, size_t* count_of_token, int* 
     char*  cur_tok  = strtok (asm_prog, " \n");
     MY_ASSERT (cur_tok != NULL);
     commands[0].com = cur_tok;
-    for (int cur_elem = 1; cur_tok != NULL; cur_elem++) //TODO
+    for (int cur_elem = 1; cur_tok != NULL; cur_elem++)
     {
         if (token_mem <= cur_elem)
         {
@@ -41,7 +41,6 @@ struct token* read_word_com (size_t* count_of_com, size_t* count_of_token, int* 
         }
         else if (strcmp (commands[cur_elem - 1].com, "pop") == 0)
         {
-            printf ("HEY\n\n");
             pop_def (commands, cur_tok, count_of_token, count_of_com, cur_elem);
         }
         else if ((strchr (commands[cur_elem - 1].com, 'j') != NULL) || (strcmp (commands[cur_elem - 1].com, "call") == 0))
@@ -123,7 +122,6 @@ void push_def (struct token* commands, char* cur_tok, size_t* count_of_token, si
 void pop_def (struct token* commands, char* cur_tok, size_t* count_of_token, size_t* count_of_com, int cur_elem)
 {
     cur_tok = strtok (NULL, " \r\n\t");
-    printf ("here\n");
     if (strchr (cur_tok, 'x') != NULL)
     {
         commands[cur_elem - 1].code_of_reg = register_def (cur_tok);
@@ -153,9 +151,9 @@ void pop_def (struct token* commands, char* cur_tok, size_t* count_of_token, siz
     }
     else
     {
-        printf ("\n\n\n\nhello\n");
         commands[cur_elem - 1].com = (char*) "pop";
     }
+
     (*count_of_token)++;
 }
 
@@ -235,13 +233,10 @@ void translate_com (struct token* commands, const size_t count_of_com, const siz
             }
             else INPUT_ERR ("%s %d", commands[cur_elem].com, commands[cur_elem].code_of_reg);
         }
-        else if (strcmp (commands[cur_elem].com, "pop") == 0) //improve
+        else if (strcmp (commands[cur_elem].com, "pop\r") == 0) //improve
         {
-
-                fprintf (num_com, "%d %d\n", POP, commands[cur_elem].code_of_reg);
-                cmd_array[cmd_size] = POP;
-                cmd_size++;
-                cmd_array[cmd_size] = commands[cur_elem].code_of_reg;
+            fprintf (num_com, "%d\n", POP);
+            cmd_array[cmd_size] = POP;
 
         }
         else if ((strcmp (commands[cur_elem].com, "popr") == 0) && (strchr (commands[cur_elem].com, '[') == NULL) && (strchr (commands[cur_elem].com, ']') == NULL))

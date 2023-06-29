@@ -1,4 +1,4 @@
-#include "CPU.h"
+#include "int_stack.h"
 
 int stack_dump (stack_t* box, const char* DUR_FILE, const char* FUNCTION, int LINE, int print_choice)
 {

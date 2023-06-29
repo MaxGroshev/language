@@ -1,0 +1,12 @@
+func_sum (var one, var two, var three)
+begin:
+    return three;
+end!
+
+func_meow ()
+begin:
+    var res = sum (9, 8, 4);
+    print (res);
+    return 0;
+end!
+$
