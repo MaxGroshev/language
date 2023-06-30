@@ -13,6 +13,7 @@ char* read_file (const char* file_dir)
     MY_ASSERT (buffer != NULL);
 
     fread  (buffer, sizeof (char), file_data.st_size, seq_file);
+    buffer[file_data.st_size] = '$';
     fclose (seq_file);
     return buffer;
 }
@@ -44,6 +45,7 @@ int lexical_analysis (char* buffer, lex_stat_t* lex_stat, prog_data_t* prog_stat
         is_this_op ("begin:", OP_BEGIN,  buffer, &pos_in_buf, lex_stat);
         is_this_op ("then",   OP_THEN,   buffer, &pos_in_buf, lex_stat);
         is_this_op ("return", OP_RETURN, buffer, &pos_in_buf, lex_stat);
+        is_this_op ("while",  OP_WHILE,  buffer, &pos_in_buf, lex_stat);
 
         if (l_strncomp (buffer + pos_in_buf, "print", strlen ("print"), STR_SKIP_SPACE, &pos_in_buf))
         {

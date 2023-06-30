@@ -1,7 +1,7 @@
 FRONT_TARGET = front
 BACK_TARGET  = back
-CC           = g++
-CFLAGS       = -c -std=c++17 -Wall
+CC           = gcc
+CFLAGS       = -g -std=c++17 #-Wall
 
 MODULES = ./backend/processor
 
@@ -42,7 +42,7 @@ all: front back
 
 front: $(FRONT_TARGET)
 $(FRONT_TARGET):  $(OBJ) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_TREE) $(OBJ_FRONT) $(OBJ_STR_LIB)
-	$(CC) -o $(FRONT_TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)  $(OBJ_STR_LIB)
+	$(CC) $(CFLAGS) -o $(FRONT_TARGET) $(OBJ)  $(OBJ_TREE) $(OBJ_LIB) $(OBJ_LOGS) $(OBJ_FRONT)  $(OBJ_STR_LIB)
 
 $(PREF_OBJ)%.o : %.cpp
 	$(CC) $(CFLAGS) $< -o $@
@@ -64,19 +64,19 @@ prog:
 
 ################################PHONIES################################################################################
 
-.PHONY : front_valgrind
+.PHONY: front_valgrind
 front_valgrind:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./front
 
-.PHONY : back_valgrind
+.PHONY: back_valgrind
 front_valgrind:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./back
 
-.PHONY : graphviz
+.PHONY: graphviz
 graphviz:
 	dot $(GR_DIR)tree_dump.dot -T pdf -o $(PREF_STAT)tree_dump.pdf
 	dot $(GR_DIR)tree_dump.dot -T png -o $(PREF_STAT)tree_dump.png
 
-.PHONY : clean
+.PHONY: clean
 clean:
 	rm -rf $(PREF_OBJ)*.o  $(FRONT_TARGET) $(BACK_TARGET) *.aux *.log vgcore.*

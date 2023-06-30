@@ -105,7 +105,6 @@ tree_node_t* tree_search (tree_node_t* tree_root, tree_node_t* node)
     MY_ASSERT (tree_root != NULL)
     if (tree_root->left != NULL)
     {
-        printf ("here\n");
         if (tree_root->left == node || tree_root->right == node)
         {
             printf ("O---K\n");

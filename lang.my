@@ -5,8 +5,14 @@ end!
 
 func_meow ()
 begin:
-    var res = sum (9, 8, 4);
-    print (res);
+    var res = sum (9, 8, 7);
+    while res != 2 then
+    begin:
+        if res * 2 == 12 then
+        begin:
+            print (res);
+        end!
+        res = res - 1;
+    end!
     return 0;
 end!
-$

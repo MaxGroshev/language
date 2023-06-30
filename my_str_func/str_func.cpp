@@ -25,7 +25,6 @@ int l_strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip
                 comp_elem--;
                 continue;
             }
-            printf ("%c--%c %d\n", *(str1 + read_elem),  *(str2 + comp_elem), comp_elem);
             if ((str1 + read_elem == NULL) || (str2 + comp_elem == NULL) || (*(str1 + read_elem) != *(str2 + comp_elem)))
             {
                 *pos_in_buf = begin_pos;
@@ -52,7 +51,9 @@ double my_strtod (const char* str, int* pos_in_buf)
     for (; (str[i] >= '0' && str[i] <= '9') || str[i] == '.'; i++)
     {
         // if ((str[0] == '0' && str[1] != '.') || (i == BUF_OF_64_ELEM) || (str[i] == '.' && point_flag != 0))
-        //         syntax_error (S_NO_CLOSED_BRACKETS, str, CUR_POS_IN_PROG); // not str to error
+        // {
+        //     fprintf (stderr, "Wrong form of number");
+        // }; // not str to error
 
         if (str[i] == '.') point_flag = 1;
         value_in_str[i] = str[i];

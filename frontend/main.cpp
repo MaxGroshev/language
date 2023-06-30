@@ -3,7 +3,7 @@
 int main ()
 {
     log_init ("./logs/front_log.html");
-    char* buffer = read_file ("./lang.txt");
+    char* buffer = read_file ("./lang.my");
 
 //INIT_OF_STRUCT_WITH_LEXEMS-------------------------------------------------------------------------------
 
@@ -17,6 +17,7 @@ int main ()
     lexical_analysis (buffer, &lex_stat, &prog_stat);
 
     FILE* array = fopen ("./frontend/debug", "w");
+    MY_ASSERT (array != NULL)
     for (int i = 0; i < lex_stat.lex_size; i++)
     {
         fprintf (array, "%d\n", lex_stat.lexems[i].node_type);

@@ -118,6 +118,10 @@ int tree_print (dump_graph_t* graph_dump_set, tree_node_t* parent)
                 graph_dump_set->nodes->fillcolor = "#DC143C";
                 print_str_node  (TREE_DUMP_SET, "return");
                 break;
+            case OP_WHILE:
+                graph_dump_set->nodes->fillcolor = "#7442C8";
+                print_str_node  (TREE_DUMP_SET, "while");
+                break;
         }
     }
 

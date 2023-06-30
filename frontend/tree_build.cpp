@@ -70,6 +70,7 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
         //case OP_BEGIN:      fprintf (lang_std, ";");      break;
         case OP_END:        fprintf (lang_std, ";");      break;
         case OP_IF:         fprintf (lang_std, "if");     break;
+        case OP_WHILE:      fprintf (lang_std, "while");  break;
         case OP_RETURN:     fprintf (lang_std, "return"); break;
     }
     if (tree_node->left != NULL)
