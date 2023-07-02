@@ -19,26 +19,40 @@ char* read_of_file (const char* file_dir)
 
 tree_node_t* build_of_tree (char* tree_buffer, prog_data_t* prog_data)
 {
+    tree_node_t* prog_tree = read_oper (tree_buffer, prog_data);
+    MY_ASSERT (prog_tree != NULL)
+
+    if (prog_data->meow_flag != 1)
+    {
+        printf ("\033[91mSyntax error. NO ""meow"" definition. Poltorashka feels sorry\033[0m\n");
+        exit (1);
+    }
+
+    return prog_tree;
+}
+
+tree_node_t* read_oper (char* tree_buffer, prog_data_t* prog_data)
+{
     static int pos_in_buf = 0;
 
     if (IS_THIS_OPER ("if"))     return tree_new_op_node (OP_IF);
     if (IS_THIS_OPER ("while"))  return tree_new_op_node (OP_WHILE);
     if (IS_THIS_OPER ("return")) return tree_new_op_node (OP_RETURN);
 
-    if (IS_THIS_OPER (";"))   return tree_new_op_node (OP_GART_N);
-    if (IS_THIS_OPER ("nil")) return NULL;
-    if (IS_THIS_OPER ("=="))  return tree_new_op_node (OP_COMP_EQ);
-    if (IS_THIS_OPER ("!="))  return tree_new_op_node (OP_N_COMP_EQ);
-    if (IS_THIS_OPER (">="))  return tree_new_op_node (OP_ABOVE_EQ);
-    if (IS_THIS_OPER ("<="))  return tree_new_op_node (OP_LESS_EQ);
-    if (IS_THIS_OPER (">"))   return tree_new_op_node (OP_ABOVE);
-    if (IS_THIS_OPER ("<"))   return tree_new_op_node (OP_LESS);
-    if (IS_THIS_OPER ("="))   return tree_new_op_node (OP_EQ);
-    if (IS_THIS_OPER ("+"))   return tree_new_op_node (OP_ADD);
-    if (IS_THIS_OPER ("*"))   return tree_new_op_node (OP_MUL);
-    if (IS_THIS_OPER ("/"))   return tree_new_op_node (OP_DIV);
-    if (IS_THIS_OPER ("^"))   return tree_new_op_node (OP_POW);
-    if (IS_THIS_OPER (","))   return tree_new_op_node (OP_COMMA);
+    if (IS_THIS_OPER (";"))      return tree_new_op_node (OP_GART_N);
+    if (IS_THIS_OPER ("nil"))    return NULL;
+    if (IS_THIS_OPER ("=="))     return tree_new_op_node (OP_COMP_EQ);
+    if (IS_THIS_OPER ("!="))     return tree_new_op_node (OP_N_COMP_EQ);
+    if (IS_THIS_OPER (">="))     return tree_new_op_node (OP_ABOVE_EQ);
+    if (IS_THIS_OPER ("<="))     return tree_new_op_node (OP_LESS_EQ);
+    if (IS_THIS_OPER (">"))      return tree_new_op_node (OP_ABOVE);
+    if (IS_THIS_OPER ("<"))      return tree_new_op_node (OP_LESS);
+    if (IS_THIS_OPER ("="))      return tree_new_op_node (OP_EQ);
+    if (IS_THIS_OPER ("+"))      return tree_new_op_node (OP_ADD);
+    if (IS_THIS_OPER ("*"))      return tree_new_op_node (OP_MUL);
+    if (IS_THIS_OPER ("/"))      return tree_new_op_node (OP_DIV);
+    if (IS_THIS_OPER ("^"))      return tree_new_op_node (OP_POW);
+    if (IS_THIS_OPER (","))      return tree_new_op_node (OP_COMMA);
     if (IS_THIS_OPER ("-"))
     {
         if (tree_buffer[pos_in_buf] >= '0' && tree_buffer[pos_in_buf] <= '9')
@@ -56,9 +70,9 @@ tree_node_t* build_of_tree (char* tree_buffer, prog_data_t* prog_data)
 
     if (IS_THIS_OPER ("{"))
     {
-        tree_node_t* root   = build_of_tree (tree_buffer, prog_data);
-        tree_node_t* l_node = build_of_tree (tree_buffer, prog_data);
-        tree_node_t* r_node = build_of_tree (tree_buffer, prog_data);
+        tree_node_t* root   = read_oper (tree_buffer, prog_data);
+        tree_node_t* l_node = read_oper (tree_buffer, prog_data);
+        tree_node_t* r_node = read_oper (tree_buffer, prog_data);
         if (l_node != NULL) tree_link_l (root, l_node);
         if (r_node != NULL) tree_link_r (root, r_node);
 
@@ -82,6 +96,7 @@ tree_node_t* read_func (char* tree_buffer, int* pos_in_buf ,prog_data_t* prog_da
     {
         strncpy (func_node->name, "meow", strlen ("meow"));
         func_node->num_of_var_func = 0;
+        prog_data->meow_flag       = 1;
         func_node->decloration = L_DECL;
         return func_node;
     }

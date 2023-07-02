@@ -1,6 +1,20 @@
 #include "backend.h"
 
-int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
+int write_asm_code(tree_node_t* prog_tree, prog_data_t* prog_data)
+{
+
+    FILE* prog_file = fopen ("./backend/prog_files/prog_code.asm", "w");
+    MY_ASSERT (prog_file != NULL);
+    fprintf (prog_file, "call :0\r\nhlt\r\n"); //improve (at least remove)
+
+    prog_tree_walk (prog_tree, prog_file, prog_data);
+
+    fclose (prog_file);
+    return 0;
+
+}
+
+int prog_tree_walk (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
 {
     if (prog_tree->node_type == TYPE_FUNC && prog_tree->decloration == L_DECL)
     {
@@ -19,11 +33,11 @@ int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_d
     }
     if (prog_tree->left != NULL)
     {
-        write_asm_code (prog_tree->left, prog_file, prog_data);
+        prog_tree_walk (prog_tree->left, prog_file, prog_data);
     }
     if (prog_tree->right != NULL)
     {
-        write_asm_code (prog_tree->right, prog_file, prog_data);
+        prog_tree_walk (prog_tree->right, prog_file, prog_data);
     }
 
     switch (prog_tree->node_type)
@@ -37,9 +51,8 @@ int write_asm_code (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_d
         case TYPE_VAR:
             fprintf (prog_file, "push [%d]\r\n", prog_tree->num_of_var_func);
             return 1;
-
         //case OP_COMMA:      fprintf (prog_file, ",");           break; // do not know
-        case OP_RETURN:     fprintf (prog_file, "ret\r\n"); break;
+        case OP_RETURN:     fprintf (prog_file, "pop ax\r\nret\r\n"); break;
     }
     if      (math_opr_def (prog_tree->node_type, prog_file)) return 1;
     else if (if_def       (prog_tree->node_type, prog_file, prog_data)) return 1;
@@ -114,7 +127,7 @@ int func_def (tree_node_t* prog_tree, FILE* prog_file, prog_data_t* prog_data)
         }
         else if (prog_tree->decloration == L_MENTION)
         {
-            fprintf (prog_file, "call :%d\r\n", prog_tree->num_of_var_func);
+            fprintf (prog_file, "call :%d\r\npush ax\r\n", prog_tree->num_of_var_func);
             prog_data->label++;
         }
         return 1;

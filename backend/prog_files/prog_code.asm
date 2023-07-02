@@ -1,38 +1,32 @@
 call :0
 hlt
 :1
-pop  [2]
-pop  [1]
 pop  [0]
-push [2]
+push [0]
+push 1
+jbe :2
+push 1
+pop ax
 ret
-:0
-push [3]
-push 9
-push 8
-push 7
-call :1
-pop  [3]
-pop
-:3
-push [3]
-push 2
-je  :4
-push [3]
-push 2
-mul
-push 12
-jne :5
-push [3]
-out
-:5
-push [3]
-push [3]
+:2
+push [0]
+push [0]
 push 1
 sub
-pop  [3]
+call :1
+push ax
+mul
+pop ax
+ret
+:0
+push [1]
+push 6
+call :1
+push ax
+pop  [1]
 pop
-jmp :3
-:4
-push 0
+push [1]
+out
+push 5
+pop ax
 ret

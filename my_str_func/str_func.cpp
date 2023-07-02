@@ -1,6 +1,7 @@
 #include "str_func.h"
 
 //=====================================COMPARE_NUM_OF_ELEM_SYMBOLS================================================================
+
 int l_strncomp (const char* str1, const char* str2, size_t num_of_elem, int skip_space, int* pos_in_buf)
 {
     if (skip_space == STR_NOT_SKIP_SPACE)

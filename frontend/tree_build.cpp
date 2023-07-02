@@ -25,7 +25,7 @@ tree_node_t* build_std_tree (prog_data_t* prog_stat, FILE* lang_std, tree_node_t
             fprintf (lang_std, "%lg", tree_node->value);
             break;
         case TYPE_VAR:
-            fprintf (lang_std, "var%d", tree_node->num_of_var_func); //Just for a time: improve work with vars
+            fprintf (lang_std, "var%d", tree_node->num_of_var_func);
             break;
         case TYPE_FUNC:
         {

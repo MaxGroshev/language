@@ -12,16 +12,10 @@ int main ()
 
 //WRITING_OF_ASM_CODE-----------------------------------------------------------------------------
 
-
-    FILE* prog_file = fopen ("./backend/prog_files/prog_code.asm", "w");
-    MY_ASSERT (prog_file != NULL);
-    fprintf (prog_file, "call :0\r\nhlt\r\n"); //improve (at least remove)
-
-    write_asm_code (prog_tree, prog_file, &prog_data);
+    write_asm_code (prog_tree, &prog_data);
 
 //DTOR_OF_PROG_INFORM-----------------------------------------------------------------------------------------------------------------------------------
 
-    fclose      (prog_file);
     free        (tree_buffer);
     tree_delete (prog_tree);
     log_distr   ();
